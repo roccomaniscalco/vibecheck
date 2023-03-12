@@ -9,6 +9,13 @@ const Home: NextPage = () => {
 
   const { data: rateLimit } = api.router.getRateLimit.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
+    select: (data) => ({
+      ...data,
+      percentageUsed: (
+        (data.resources.core.used / data.resources.core.limit) *
+        100
+      ).toFixed(1),
+    }),
   });
 
   const { data: commits } = api.router.getCommits.useQuery(
@@ -34,6 +41,21 @@ const Home: NextPage = () => {
             <p className="text-center text-2xl text-white">
               {sessionData && (
                 <span>Logged in as {sessionData.user?.name}</span>
+              )}
+              {rateLimit && (
+                <div className="m-12">
+                  <label className="text-white" htmlFor="resource limit">
+                    {rateLimit.percentageUsed}% Resource Usage
+                  </label>
+                  <meter
+                    className="text-white"
+                    id="resource limit"
+                    value={rateLimit.resources.core.used}
+                    max={rateLimit.resources.core.limit}
+                  >
+                    {rateLimit.percentageUsed} %
+                  </meter>
+                </div>
               )}
               {commits &&
                 commits.map((commit) => (
