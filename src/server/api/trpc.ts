@@ -16,11 +16,15 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
+import { getToken, type JWT } from "next-auth/jwt";
 
 import { getServerAuthSession } from "@/server/auth";
 
+type Token = JWT & { accessToken: string | undefined };
+
 type CreateContextOptions = {
   session: Session | null;
+  token: Token;
 };
 
 /**
@@ -36,6 +40,7 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
+    token: opts.token,
   };
 };
 
@@ -50,9 +55,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
+  const token = (await getToken({ req })) as Token;
 
   return createInnerTRPCContext({
     session,
+    token,
   });
 };
 
@@ -103,6 +110,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
     ctx: {
       // infers the `session` as non-nullable
       session: { ...ctx.session, user: ctx.session.user },
+      token: { ...ctx.token },
     },
   });
 });

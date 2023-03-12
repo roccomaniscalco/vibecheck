@@ -34,24 +34,35 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    session(ctx) {
+      const { session, token } = ctx;
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
       }
       return session;
     },
+    jwt({ token, account }) {
+      // Persist the OAuth access_token
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
   },
+
   providers: [
-        /**
+    /**
      * ...add more providers here.
      * @see https://next-auth.js.org/providers/github
      */
-      GithubProvider({
-        clientId: env.GITHUB_CLIENT_ID,
-        clientSecret: env.GITHUB_CLIENT_SECRET,
-      }),
+    GithubProvider({
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
+    }),
   ],
 };
 

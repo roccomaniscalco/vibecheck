@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
+// TODO: limit schemas to the properties that are actually used
 export const commitSchema = z.object({
   url: z.string(),
   sha: z.string(),
@@ -72,24 +73,54 @@ export const commitSchema = z.object({
   parents: z.array(z.object({ url: z.string(), sha: z.string() })),
 });
 
+const rateLimitSchema = z.object({
+  resources: z.object({
+    core: z.object({
+      limit: z.number(),
+      remaining: z.number(),
+      reset: z.number(),
+      used: z.number(),
+    }),
+  }),
+});
+
 export const router = createTRPCRouter({
-  commits: publicProcedure
+  commits: protectedProcedure
     .input(z.object({ owner: z.string(), repo: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const { owner, repo } = input;
 
+      // Throw if the user has an access token
+      if (!ctx.token.accessToken) {
+        throw new Error("No access token");
+      }
+
+      // Fetch the user's rate limit
+      const rateLimitJson = (await fetch("https://api.github.com/rate_limit", {
+        headers: {
+          Authorization: `token ${ctx.token.accessToken}`,
+        },
+      }).then((res) => res.json())) as unknown;
+      const rateLimit = rateLimitSchema.parse(rateLimitJson);
+
+      console.log(rateLimit)
+
+      // Throw if the user has exceeded their rate limit
+      if (rateLimit.resources.core.remaining === 0) {
+        throw new Error("Rate limit exceeded");
+      }
+
+      // Fetch the user's commits
       const commitsJson = (await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/commits`,
+        `https://api.github.com/repos/${owner}/${repo}/commits?per_page=100`,
         {
           headers: {
-            Authorization: `token 76ab8a55ecc8d0efaa7477696c24b2a5e30cfa54`,
+            Authorization: `token ${ctx.token.accessToken}`,
           },
         }
       ).then((res) => res.json())) as unknown;
-      console.log(commitsJson);
-
       const commits = z.array(commitSchema).parse(commitsJson);
 
-      return { commits };
+      return commits;
     }),
 });
