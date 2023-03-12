@@ -66,9 +66,18 @@ const AuthShowcase: React.FC = () => {
     { enabled: sessionData?.user !== undefined }
   );
 
-  const { data: commits } = api.router.commits.useQuery(
+  const { data: rateLimit } = api.router.getRateLimit.useQuery(undefined, {
+    enabled: sessionData?.user !== undefined,
+  });
+
+  const { data: commits } = api.router.getCommits.useQuery(
     { owner: "roccomaniscalco", repo: "rocco.software" },
-    { enabled: sessionData?.user !== undefined }
+    {
+      enabled:
+        sessionData?.user !== undefined &&
+        rateLimit &&
+        rateLimit.resources.core.remaining > 0,
+    }
   );
 
   return (
@@ -78,7 +87,9 @@ const AuthShowcase: React.FC = () => {
         {secretMessage && <span> - {secretMessage}</span>}
         {commits &&
           commits.map((commit) => (
-            <span className="block" key={commit.sha}> {commit.commit.message} </span>
+            <span className="block" key={commit.sha}>
+              {commit.commit.message}
+            </span>
           ))}
       </p>
       <button

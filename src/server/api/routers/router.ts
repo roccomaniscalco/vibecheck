@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 // TODO: limit schemas to the properties that are actually used
-export const commitSchema = z.object({
+const commitSchema = z.object({
   url: z.string(),
   sha: z.string(),
   node_id: z.string(),
@@ -81,11 +81,28 @@ const rateLimitSchema = z.object({
       reset: z.number(),
       used: z.number(),
     }),
-  }),
-});
+  }).required(),
+}).required();
 
 export const router = createTRPCRouter({
-  commits: protectedProcedure
+  getRateLimit: protectedProcedure.query(async ({ ctx }) => {
+    // Throw if the user has an access token
+    if (!ctx.token.accessToken) {
+      throw new Error("No access token");
+    }
+
+    // Fetch the user's rate limit
+    const rateLimitJson = (await fetch("https://api.github.com/rate_limit", {
+      headers: {
+        Authorization: `token ${ctx.token.accessToken}`,
+      },
+    }).then((res) => res.json())) as unknown;
+
+    const rateLimit = rateLimitSchema.parse(rateLimitJson);
+    return rateLimit;
+  }),
+
+  getCommits: protectedProcedure
     .input(z.object({ owner: z.string(), repo: z.string() }))
     .query(async ({ input, ctx }) => {
       const { owner, repo } = input;
@@ -93,21 +110,6 @@ export const router = createTRPCRouter({
       // Throw if the user has an access token
       if (!ctx.token.accessToken) {
         throw new Error("No access token");
-      }
-
-      // Fetch the user's rate limit
-      const rateLimitJson = (await fetch("https://api.github.com/rate_limit", {
-        headers: {
-          Authorization: `token ${ctx.token.accessToken}`,
-        },
-      }).then((res) => res.json())) as unknown;
-      const rateLimit = rateLimitSchema.parse(rateLimitJson);
-
-      console.log(rateLimit)
-
-      // Throw if the user has exceeded their rate limit
-      if (rateLimit.resources.core.remaining === 0) {
-        throw new Error("Rate limit exceeded");
       }
 
       // Fetch the user's commits
@@ -119,8 +121,8 @@ export const router = createTRPCRouter({
           },
         }
       ).then((res) => res.json())) as unknown;
-      const commits = z.array(commitSchema).parse(commitsJson);
 
+      const commits = z.array(commitSchema).parse(commitsJson);
       return commits;
     }),
 });
