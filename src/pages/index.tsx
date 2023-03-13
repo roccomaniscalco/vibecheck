@@ -3,6 +3,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 
 import { api } from "@/utils/api";
+import Highlight from "@/components/Highlight";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -11,6 +12,7 @@ const Home: NextPage = () => {
     enabled: sessionData?.user !== undefined,
     select: (data) => ({
       ...data,
+      // i.e. 2.7
       percentageUsed: (
         (data.resources.core.used / data.resources.core.limit) *
         100
@@ -19,7 +21,7 @@ const Home: NextPage = () => {
   });
 
   const { data: commits } = api.router.getCommits.useQuery(
-    { owner: "roccomaniscalco", repo: "rocco.software" },
+    { owner: "roccomaniscalco", repo: "chatterbox" },
     {
       enabled:
         sessionData?.user !== undefined &&
@@ -38,7 +40,7 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="text-center text-2xl text-white">
+            <div className=" text-2xl text-white">
               {sessionData && (
                 <span>Logged in as {sessionData.user?.name}</span>
               )}
@@ -59,11 +61,26 @@ const Home: NextPage = () => {
               )}
               {commits &&
                 commits.map((commit) => (
-                  <span className="block" key={commit.sha}>
-                    {commit.commit.message}
-                  </span>
+                  <div key={commit.sha} className="my-4">
+                    <span>
+                      <Highlight
+                        text={commit.commit.message}
+                        positive={commit.sentiment.positive}
+                        negative={commit.sentiment.negative}
+                      />
+                    </span>{" "}
+                    <span
+                      className={
+                        commit.sentiment.score > 0
+                          ? "text-green-200"
+                          : "text-yellow-200"
+                      }
+                    >
+                      {commit.sentiment.score}
+                    </span>
+                  </div>
                 ))}
-            </p>
+            </div>
             <button
               className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
               onClick={sessionData ? () => void signOut() : () => void signIn()}

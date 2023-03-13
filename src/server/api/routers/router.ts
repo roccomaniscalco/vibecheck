@@ -1,3 +1,4 @@
+import Sentiment from "sentiment";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -81,8 +82,10 @@ const rateLimitSchema = z.object({
       reset: z.number(),
       used: z.number(),
     }),
-  }).required(),
-}).required();
+  }),
+});
+
+const sentiment = new Sentiment();
 
 export const router = createTRPCRouter({
   getRateLimit: protectedProcedure.query(async ({ ctx }) => {
@@ -123,6 +126,11 @@ export const router = createTRPCRouter({
       ).then((res) => res.json())) as unknown;
 
       const commits = z.array(commitSchema).parse(commitsJson);
-      return commits;
+      const analyzedCommits = commits.map((commit) => ({
+        ...commit,
+        sentiment: sentiment.analyze(commit.commit.message),
+      }));
+
+      return analyzedCommits;
     }),
 });
