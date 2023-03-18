@@ -89,7 +89,7 @@ const sentiment = new Sentiment();
 
 export const router = createTRPCRouter({
   getRateLimit: protectedProcedure.query(async ({ ctx }) => {
-    // Throw if the user has an access token
+    // Throw if the user does not have an access token
     if (!ctx.token.accessToken) {
       throw new Error("No access token");
     }
@@ -110,7 +110,7 @@ export const router = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const { owner, repo } = input;
 
-      // Throw if the user has an access token
+      // Throw if the user does not have an access token
       if (!ctx.token.accessToken) {
         throw new Error("No access token");
       }
