@@ -4,6 +4,11 @@ import Head from "next/head";
 
 import { api } from "@/utils/api";
 import Highlight from "@/components/Highlight";
+import dynamic from "next/dynamic";
+
+const CommitLineGraph = dynamic(() => import("@/components/CommitLineGraph"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -49,6 +54,9 @@ const Home: NextPage = () => {
             </button>
           </div>
         )}
+
+        <CommitLineGraph />
+
         {rateLimit && (
           <div className="m-12">
             <label className="text-white" htmlFor="resource limit">
