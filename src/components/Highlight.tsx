@@ -1,22 +1,23 @@
+import { memo } from "react";
+
 type HighlightProps = { text: string; positive: string[]; negative: string[] };
 
-const Highlight = ({ text, positive, negative }: HighlightProps) => {
-  // split text into parts that are either positive, negative, or neither
-  const parts = text.split(
-    new RegExp(`(${[...positive, ...negative].join("|")})`, "gi")
+const Highlight = (props: HighlightProps) => {
+  // split text into chunks that are either positive, negative, or neither
+  const chunks = props.text.split(
+    new RegExp(`(${[...props.positive, ...props.negative].join("|")})`, "gi")
   );
 
   return (
-    <span className="break-all">
-      {parts.map((part, i) => {
-        // part is distinct if not preceded or followed by a letter, number, or space
+    <p>
+      {chunks.map((chunk, i) => {
+        // chunk is distinct if not preceded and not followed by a letter, number, or hyphen
         // prevents highlighting words that are substrings of other words (e.g. "no" in "node")
-        const isDistinctFront = !parts[i - 1]?.slice(-1).match(`[a-zA-Z\d\s\-]`);
-        const isDistinctBack = !parts[i + 1]?.charAt(0).match(`[a-zA-Z\d\s\-]`);
-        const isDistinct = isDistinctFront && isDistinctBack;
-        
-        const isPositive = positive.includes(part.toLowerCase());
-        const isNegative = negative.includes(part.toLowerCase());
+        const isDistinct =
+          !chunks[i - 1]?.slice(-1).match(/[a-zA-Z\d\-]/) &&
+          !chunks[i + 1]?.charAt(0).match(/[a-zA-Z\d\-]/);
+        const isPositive = props.positive.includes(chunk.toLowerCase());
+        const isNegative = props.negative.includes(chunk.toLowerCase());
 
         return (
           <span
@@ -25,12 +26,12 @@ const Highlight = ({ text, positive, negative }: HighlightProps) => {
               isNegative && isDistinct ? "bg-red-800" : ""
             }`}
           >
-            {part}
+            {chunk}
           </span>
         );
       })}
-    </span>
+    </p>
   );
 };
 
-export default Highlight;
+export default memo(Highlight);
