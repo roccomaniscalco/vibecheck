@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   });
 
   const { data: commits } = api.router.getCommits.useQuery(
-    { owner: "roccomaniscalco", repo: "chatterbox" },
+    { owner: "facebook", repo: "react" },
     {
       enabled:
         sessionData?.user !== undefined &&

@@ -11,11 +11,10 @@ const Highlight = ({ text, positive, negative }: HighlightProps) => {
       {parts.map((part, i) => {
         // part is distinct if not preceded or followed by a letter, number, or space
         // prevents highlighting words that are substrings of other words (e.g. "no" in "node")
-        const isDistinct = parts[i + 1]
-          ? parts[i + 1]?.charAt(0).match(`[^a-zA-Z\d\s]`)
-          : true && parts[i - 1]
-          ? parts[i - 1]?.slice(-1).match(`[^a-zA-Z\d\s]`)
-          : true;
+        const isDistinctFront = !parts[i - 1]?.slice(-1).match(`[a-zA-Z\d\s\-]`);
+        const isDistinctBack = !parts[i + 1]?.charAt(0).match(`[a-zA-Z\d\s\-]`);
+        const isDistinct = isDistinctFront && isDistinctBack;
+        
         const isPositive = positive.includes(part.toLowerCase());
         const isNegative = negative.includes(part.toLowerCase());
 
