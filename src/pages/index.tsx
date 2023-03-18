@@ -38,7 +38,17 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-4">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {sessionData && (
+          <div>
+            Logged in as {sessionData.user?.name}
+            <button
+              className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+              onClick={sessionData ? () => void signOut() : () => void signIn()}
+            >
+              {sessionData ? "Sign out" : "Sign in"}
+            </button>
+          </div>
+        )}
         {rateLimit && (
           <div className="m-12">
             <label className="text-white" htmlFor="resource limit">
@@ -74,13 +84,6 @@ const Home: NextPage = () => {
             <div>{JSON.stringify(commit.sentiment.negative)}</div>
           </div>
         ))}
-
-        <button
-          className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-          onClick={sessionData ? () => void signOut() : () => void signIn()}
-        >
-          {sessionData ? "Sign out" : "Sign in"}
-        </button>
       </main>
     </>
   );

@@ -17,6 +17,7 @@
     "next": "^13.2.1",
     "next-auth": "^4.19.0",
     "react": "18.2.0",
+    "react-charts": "^3.0.0-beta.54",
     "react-dom": "18.2.0",
     "sentiment": "^5.0.2",
     "superjson": "1.9.1",
