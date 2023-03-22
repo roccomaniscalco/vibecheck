@@ -1,17 +1,30 @@
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-
-import { api } from "@/utils/api";
 import Highlight from "@/components/Highlight";
+import { api } from "@/utils/api";
 import dynamic from "next/dynamic";
+import type { FormEvent } from "react";
+import { useRef, useState } from "react";
+import { z } from "zod";
 
 const CommitLineGraph = dynamic(() => import("@/components/CommitLineGraph"), {
   ssr: false,
 });
 
+const allowedChars = /^([a-zA-Z0-9\-\_\.\/]*)$/; // only letters, numbers, -, _, /, .
+const ownerRepo = /(.+)\/(.+)/; // something/something-else
+const searchTermSchema = z
+  .string()
+  .min(1, "Must not be empty")
+  .regex(allowedChars, "Must only contain letters, numbers, -, _, /, and .")
+  .regex(ownerRepo, "Must be in the format of 'owner/repo'");
+
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("facebook/react");
+  const [searchError, setSearchError] = useState<z.ZodError | null>(null);
 
   const { data: rateLimit } = api.router.getRateLimit.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
@@ -26,14 +39,29 @@ const Home: NextPage = () => {
   });
 
   const { data: commits } = api.router.getCommits.useQuery(
-    { owner: "facebook", repo: "react" },
+    { ownerRepo: searchTerm },
     {
       enabled:
         sessionData?.user !== undefined &&
-        rateLimit &&
-        rateLimit.resources.core.remaining > 0,
+        Number(rateLimit?.resources.core.remaining) > 0 &&
+        searchError === null,
     }
   );
+
+  const handleSearchSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const newSearchTerm = searchInputRef.current?.value;
+    const parsed = searchTermSchema.safeParse(newSearchTerm);
+
+    if (parsed.success) {
+      setSearchTerm(parsed.data);
+      setSearchError(null);
+    } else {
+      setSearchError(parsed.error);
+    }
+  };
 
   return (
     <>
@@ -55,7 +83,21 @@ const Home: NextPage = () => {
           </div>
         )}
 
-        <CommitLineGraph />
+        <div className="flex flex-col items-center justify-center py-2">
+          <form onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              className="bg-slate-700 text-white"
+              ref={searchInputRef}
+            />
+            <input type="submit" value="search" />
+          </form>
+          <div>
+            {searchError ? searchError?.issues?.[0]?.message : searchTerm}
+          </div>
+        </div>
+
+        <CommitLineGraph ownerRepo={searchTerm} />
 
         {rateLimit && (
           <div className="m-12">
@@ -88,8 +130,6 @@ const Home: NextPage = () => {
             >
               {commit.sentiment.score}
             </span>
-            <div>{JSON.stringify(commit.sentiment.positive)}</div>
-            <div>{JSON.stringify(commit.sentiment.negative)}</div>
           </div>
         ))}
       </main>

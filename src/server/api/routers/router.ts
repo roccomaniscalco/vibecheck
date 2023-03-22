@@ -106,9 +106,9 @@ export const router = createTRPCRouter({
   }),
 
   getCommits: protectedProcedure
-    .input(z.object({ owner: z.string(), repo: z.string() }))
+    .input(z.object({ ownerRepo: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { owner, repo } = input;
+      const { ownerRepo } = input;
 
       // Throw if the user does not have an access token
       if (!ctx.token.accessToken) {
@@ -117,7 +117,7 @@ export const router = createTRPCRouter({
 
       // Fetch the user's commits
       const commitsJson = (await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/commits?per_page=100`,
+        `https://api.github.com/repos/${ownerRepo}/commits?per_page=100`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,

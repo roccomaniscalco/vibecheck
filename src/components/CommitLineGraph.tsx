@@ -5,11 +5,10 @@ import { Chart } from "react-charts";
 
 type MyDatum = { date: Date; sentimentScore: number };
 
-const CommitLineGraph = () => {
+const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
   const { data: commits, isLoading } = api.router.getCommits.useQuery(
     {
-      owner: "facebook",
-      repo: "react",
+      ownerRepo,
     },
     {
       select: (data) => ({
