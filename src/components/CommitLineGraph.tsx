@@ -6,7 +6,7 @@ import { Chart } from "react-charts";
 type MyDatum = { date: Date; sentimentScore: number };
 
 const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
-  const { data: commits, isLoading } = api.router.getCommits.useQuery(
+  const commits = api.router.getCommits.useQuery(
     {
       ownerRepo,
     },
@@ -39,12 +39,13 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
 
   return (
     <div className="h-96 w-full text-white">
-      {isLoading || !commits ? (
-        "loading..."
-      ) : (
+      {commits.error && (
+        <div className="rounded-md bg-red-800 p-4">{commits.error.message}</div>
+      )}
+      {commits.data && (
         <Chart
           options={{
-            data: [commits],
+            data: [commits.data],
             primaryAxis,
             secondaryAxes,
             dark: true,

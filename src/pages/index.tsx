@@ -38,7 +38,7 @@ const Home: NextPage = () => {
     }),
   });
 
-  const { data: commits } = api.router.getCommits.useQuery(
+  const commits = api.router.getCommits.useQuery(
     { ownerRepo: searchTerm },
     {
       enabled:
@@ -71,17 +71,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="p-4">
-        {sessionData && (
-          <div>
-            Logged in as {sessionData.user?.name}
-            <button
-              className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-              onClick={sessionData ? () => void signOut() : () => void signIn()}
-            >
-              {sessionData ? "Sign out" : "Sign in"}
-            </button>
-          </div>
-        )}
+        <div>
+          {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+          <button
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            onClick={sessionData ? () => void signOut() : () => void signIn()}
+          >
+            {sessionData ? "Sign out" : "Sign in"}
+          </button>
+        </div>
 
         <div className="flex flex-col items-center justify-center py-2">
           <form onSubmit={handleSearchSubmit}>
@@ -94,6 +92,7 @@ const Home: NextPage = () => {
           </form>
           <div>
             {searchError ? searchError?.issues?.[0]?.message : searchTerm}
+            {commits.isLoading && <span>loading...</span>}
           </div>
         </div>
 
@@ -114,7 +113,7 @@ const Home: NextPage = () => {
             </meter>
           </div>
         )}
-        {commits?.map((commit) => (
+        {commits.data?.map((commit) => (
           <div key={commit.sha} className="my-4 break-words">
             <Highlight
               text={commit.commit.message}
@@ -132,6 +131,9 @@ const Home: NextPage = () => {
             </span>
           </div>
         ))}
+        {commits && (
+          <div className="text-red-500">{commits.error?.message}</div>
+        )}
       </main>
     </>
   );

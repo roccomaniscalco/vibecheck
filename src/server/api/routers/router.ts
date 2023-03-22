@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import Sentiment from "sentiment";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -91,7 +92,10 @@ export const router = createTRPCRouter({
   getRateLimit: protectedProcedure.query(async ({ ctx }) => {
     // Throw if the user does not have an access token
     if (!ctx.token.accessToken) {
-      throw new Error("No access token");
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "No access token",
+      });
     }
 
     // Fetch the user's rate limit
@@ -112,7 +116,10 @@ export const router = createTRPCRouter({
 
       // Throw if the user does not have an access token
       if (!ctx.token.accessToken) {
-        throw new Error("No access token");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "No access token",
+        });
       }
 
       // Fetch the user's commits
@@ -123,13 +130,27 @@ export const router = createTRPCRouter({
             Authorization: `token ${ctx.token.accessToken}`,
           },
         }
-      ).then((res) => res.json())) as unknown;
+      ).then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        if (res.status === 404) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Repository not found",
+          });
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unknown error",
+        });
+      })) as unknown;
 
       const commits = z.array(commitSchema).parse(commitsJson);
       const analyzedCommits = commits.map((commit) => ({
         ...commit,
         sentiment: sentiment.analyze(commit.commit.message),
-      }));
+      }));  
 
       return analyzedCommits;
     }),
