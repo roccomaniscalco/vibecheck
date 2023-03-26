@@ -9,7 +9,7 @@ const Highlight = (props: HighlightProps) => {
   );
 
   return (
-    <p>
+    <pre>
       {chunks.map((chunk, i) => {
         // chunk is distinct if not preceded and not followed by a letter, number, or hyphen
         // prevents highlighting words that are substrings of other words (e.g. "no" in "node")
@@ -30,7 +30,7 @@ const Highlight = (props: HighlightProps) => {
           </span>
         );
       })}
-    </p>
+    </pre>
   );
 };
 
