@@ -3,6 +3,7 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import type { RouterOutputs } from "@/utils/api";
 import Image from "next/image";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { dateDiff } from "@/utils/dateDiff";
 
 type HighlightProps = { text: string; positive: string[]; negative: string[] };
 const Highlight = (props: HighlightProps) => {
@@ -110,7 +111,12 @@ const Commit = (props: CommitProps) => {
           src={`${props.author.avatar_url}?size=20`}
           alt={`${props.author.name} avatar`}
         />
-        <span>{props.author.login}</span>
+        <span>
+          <span className="font-semibold">{props.author.login}</span>{" "}
+          <span className="text-gray-400">
+            committed {dateDiff(new Date(props.date), new Date())}
+          </span>
+        </span>
       </div>
     </div>
   );

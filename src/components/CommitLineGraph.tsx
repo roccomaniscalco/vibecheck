@@ -14,7 +14,7 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
       select: (data) => ({
         label: "Score",
         data: data.map((commit) => ({
-          date: new Date(commit.author.date),
+          date: new Date(commit.date),
           sentimentScore: Number(commit.sentiment.score),
         })),
       }),
