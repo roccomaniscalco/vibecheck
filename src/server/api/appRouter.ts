@@ -30,6 +30,17 @@ const rateLimitSchema = z.object({
   }),
 });
 
+const reposSchema = z.object({
+  total_count: z.number(),
+  incomplete_results: z.boolean(),
+  items: z.array(
+    z.object({
+      id: z.number(),
+      full_name: z.string(),
+    })
+  ),
+});
+
 const sentiment = new Sentiment();
 
 export const appRouter = createTRPCRouter({
@@ -105,6 +116,40 @@ export const appRouter = createTRPCRouter({
       }));
 
       return analyzedAndFormattedCommits;
+    }),
+
+  searchRepos: protectedProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ input, ctx }) => {
+      // Throw if the user does not have an access token
+      if (!ctx.token.accessToken) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "No access token",
+        });
+      }
+
+      const reposJson = (await fetch(
+        `https://api.github.com/search/repositories?q=${input.query}`,
+        {
+          headers: {
+            Authorization: `token ${ctx.token.accessToken}`,
+          },
+        }
+      ).then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unknown error",
+        });
+      })) as unknown;
+
+      console.log(reposJson);
+
+      const repos = reposSchema.parse(reposJson);
+      return repos.items;
     }),
 });
 

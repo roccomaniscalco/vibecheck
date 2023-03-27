@@ -25,8 +25,9 @@ const Home: NextPage = () => {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("facebook/react");
   const [searchError, setSearchError] = useState<z.ZodError | null>(null);
+  const apiContext = api.useContext()
 
-  const { data: rateLimit } = api.getRateLimit.useQuery(undefined, {
+  const rateLimit = api.getRateLimit.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
     select: (data) => ({
       ...data,
@@ -38,12 +39,25 @@ const Home: NextPage = () => {
     }),
   });
 
+  const repoSearchResults = api.searchRepos.useQuery(
+    { query: searchTerm },
+    {
+      enabled:
+        sessionData?.user !== undefined &&
+        Number(rateLimit.data?.resources.core.remaining) > 0 &&
+        searchError === null,
+      onSettled: (): void => {
+        void apiContext.getRateLimit.invalidate()
+      }
+    }
+  );
+
   const commits = api.getCommits.useQuery(
     { ownerRepo: searchTerm },
     {
       enabled:
         sessionData?.user !== undefined &&
-        Number(rateLimit?.resources.core.remaining) > 0 &&
+        Number(rateLimit.data?.resources.core.remaining) > 0 &&
         searchError === null,
     }
   );
@@ -92,22 +106,27 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <CommitGraph ownerRepo={searchTerm} />
-
-        {rateLimit && (
+        {rateLimit.data && (
           <div className="m-12">
             <label htmlFor="resource limit">
-              {rateLimit.percentageUsed}% Resource Usage
+              {rateLimit.data.percentageUsed}% Resource Usage
             </label>
             <meter
               id="resource limit"
-              value={rateLimit.resources.core.used}
-              max={rateLimit.resources.core.limit}
+              value={rateLimit.data.resources.core.used}
+              max={rateLimit.data.resources.core.limit}
             >
-              {rateLimit.percentageUsed} %
+              {rateLimit.data.percentageUsed} %
             </meter>
           </div>
         )}
+
+        <div>
+          <pre>{JSON.stringify(repoSearchResults.data, undefined, 3)}</pre>
+        </div>
+
+        <CommitGraph ownerRepo={searchTerm} />
+
         {commits.data && <Commits commits={commits.data} />}
         {commits && (
           <div className="text-red-500">{commits.error?.message}</div>
