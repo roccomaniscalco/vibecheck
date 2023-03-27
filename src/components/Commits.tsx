@@ -58,7 +58,7 @@ const Commit = (props: CommitProps) => {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="inline font-semibold break-words">
+            <h4 className="inline break-words font-semibold">
               <Highlight
                 text={summary}
                 positive={props.sentiment.positive}
@@ -95,7 +95,7 @@ const Commit = (props: CommitProps) => {
         </div>
         {description && (
           <Collapsible.Content>
-            <pre className="mb-2 whitespace-pre-wrap text-sm text-gray-400 break-words">
+            <pre className="mb-2 whitespace-pre-wrap break-words text-sm text-gray-400">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -125,20 +125,22 @@ const Commit = (props: CommitProps) => {
 };
 
 const Commits = (props: { commits: CommitProps[] }) => {
-  const commitsGroupedByDate = props.commits.reduce((acc, commit) => {
+  const commitsByDate = props.commits.reduce((result, commit) => {
     const date = new Date(commit.date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    return { ...acc, [date]: [...(acc[date] || []), commit] };
+    if (!result[date]) result[date] = [];
+    result[date]?.push(commit);
+    return result;
   }, {} as Record<string, CommitProps[]>);
 
   return (
     <>
-      {Object.entries(commitsGroupedByDate).map(([date, commits]) => (
+      {Object.entries(commitsByDate).map(([date, commits]) => (
         <section
-          className="ml-4 flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4 text-sm"
+          className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4 text-sm"
           key={date}
         >
           <div className="-ml-6 mt-4 flex items-center gap-4 text-gray-400">
