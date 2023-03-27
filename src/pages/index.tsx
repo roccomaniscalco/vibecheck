@@ -8,7 +8,7 @@ import type { FormEvent } from "react";
 import { useRef, useState } from "react";
 import { z } from "zod";
 
-const CommitLineGraph = dynamic(() => import("@/components/CommitLineGraph"), {
+const CommitGraph = dynamic(() => import("@/components/CommitGraph"), {
   ssr: false,
 });
 
@@ -92,7 +92,7 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <CommitLineGraph ownerRepo={searchTerm} />
+        <CommitGraph ownerRepo={searchTerm} />
 
         {rateLimit && (
           <div className="m-12">

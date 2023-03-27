@@ -5,7 +5,7 @@ import { Chart } from "react-charts";
 
 type MyDatum = { date: Date; sentimentScore: number };
 
-const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
+const CommitGraph = ({ ownerRepo }: { ownerRepo: string }) => {
   const commits = api.getCommits.useQuery(
     {
       ownerRepo,
@@ -32,6 +32,7 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
     (): AxisOptions<MyDatum>[] => [
       {
         getValue: (datum) => datum.sentimentScore,
+        elementType: "bubble",
       },
     ],
     []
@@ -45,10 +46,21 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
       {commits.data && (
         <Chart
           options={{
-            data: [commits.data],
+            data: [commits.data, ],
             primaryAxis,
             secondaryAxes,
             dark: true,
+            interactionMode: "closest",
+            initialWidth: 800,
+            initialHeight: 400,
+            getDatumStyle: (datum) => ({
+              circle: {
+                r: Math.log(Math.abs(datum.originalDatum.sentimentScore)) * 4,
+                opacity: 0.5,
+              },
+              color:
+                datum.originalDatum.sentimentScore > 0 ? "#4ade80" : "#f87171",
+            }),
           }}
         />
       )}
@@ -56,4 +68,4 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
   );
 };
 
-export default CommitLineGraph;
+export default CommitGraph;
