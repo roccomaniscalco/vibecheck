@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("facebook/react");
   const [searchError, setSearchError] = useState<z.ZodError | null>(null);
 
-  const { data: rateLimit } = api.router.getRateLimit.useQuery(undefined, {
+  const { data: rateLimit } = api.getRateLimit.useQuery(undefined, {
     enabled: sessionData?.user !== undefined,
     select: (data) => ({
       ...data,
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
     }),
   });
 
-  const commits = api.router.getCommits.useQuery(
+  const commits = api.getCommits.useQuery(
     { ownerRepo: searchTerm },
     {
       enabled:

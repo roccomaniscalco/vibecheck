@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import Sentiment from "sentiment";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 const commitSchema = z.object({
   sha: z.string(),
@@ -30,7 +30,7 @@ const rateLimitSchema = z.object({
 
 const sentiment = new Sentiment();
 
-export const router = createTRPCRouter({
+export const appRouter = createTRPCRouter({
   getRateLimit: protectedProcedure.query(async ({ ctx }) => {
     // Throw if the user does not have an access token
     if (!ctx.token.accessToken) {
@@ -97,3 +97,6 @@ export const router = createTRPCRouter({
       return analyzedCommits;
     }),
 });
+
+// export type definition of API
+export type AppRouter = typeof appRouter;

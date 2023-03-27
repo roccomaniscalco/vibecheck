@@ -1,0 +1,11 @@
+{
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#3b5eb2",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#5879c8",
+        "statusBarItem.remoteBackground": "#3b5eb2",
+        "statusBarItem.remoteForeground": "#e7e7e7"
+    },
+    "peacock.color": "#3b5eb2"
+}

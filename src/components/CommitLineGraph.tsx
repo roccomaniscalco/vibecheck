@@ -6,7 +6,7 @@ import { Chart } from "react-charts";
 type MyDatum = { date: Date; sentimentScore: number };
 
 const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
-  const commits = api.router.getCommits.useQuery(
+  const commits = api.getCommits.useQuery(
     {
       ownerRepo,
     },
