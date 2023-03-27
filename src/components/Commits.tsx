@@ -1,9 +1,9 @@
-import { memo, useState } from "react";
-import * as Collapsible from "@radix-ui/react-collapsible";
 import type { RouterOutputs } from "@/utils/api";
-import Image from "next/image";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { dateDiff } from "@/utils/dateDiff";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import { CommitIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
+import { memo, useState } from "react";
 
 type HighlightProps = { text: string; positive: string[]; negative: string[] };
 const Highlight = (props: HighlightProps) => {
@@ -50,7 +50,7 @@ const Commit = (props: CommitProps) => {
   ];
 
   return (
-    <div className="rounded-md border border-slate-200 p-4 dark:border-slate-700 ">
+    <>
       <Collapsible.Root
         open={isOpen}
         onOpenChange={setIsOpen}
@@ -58,7 +58,7 @@ const Commit = (props: CommitProps) => {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="inline font-semibold">
+            <h4 className="inline font-semibold break-words">
               <Highlight
                 text={summary}
                 positive={props.sentiment.positive}
@@ -77,9 +77,11 @@ const Commit = (props: CommitProps) => {
             <div
               className={`${
                 props.sentiment.score < 0 ? "text-red-400" : "text-green-400"
+              } ${
+                props.sentiment.score === 0 ? "opacity-0" : ""
               } font-semibold`}
             >
-              {props.sentiment.score !== 0 && props.sentiment.score}
+              {props.sentiment.score}
             </div>
             <a
               href={props.html_url}
@@ -87,13 +89,13 @@ const Commit = (props: CommitProps) => {
               title="View commit on Github"
               className="text-slate-400 hover:text-slate-300"
             >
-              <GitHubLogoIcon className="h-6" />
+              <GitHubLogoIcon />
             </a>
           </div>
         </div>
         {description && (
-          <Collapsible.Content className="space-y-2">
-            <pre className="whitespace-pre-wrap text-sm text-gray-400">
+          <Collapsible.Content>
+            <pre className="mb-2 whitespace-pre-wrap text-sm text-gray-400 break-words">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -103,7 +105,7 @@ const Commit = (props: CommitProps) => {
           </Collapsible.Content>
         )}
       </Collapsible.Root>
-      <div className="mt-2 flex items-center gap-2">
+      <div className="mt-1 flex items-center gap-2">
         <Image
           className="block rounded-full"
           width={20}
@@ -118,8 +120,45 @@ const Commit = (props: CommitProps) => {
           </span>
         </span>
       </div>
-    </div>
+    </>
   );
 };
 
-export default memo(Commit);
+const Commits = (props: { commits: CommitProps[] }) => {
+  const commitsGroupedByDate = props.commits.reduce((acc, commit) => {
+    const date = new Date(commit.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    return { ...acc, [date]: [...(acc[date] || []), commit] };
+  }, {} as Record<string, CommitProps[]>);
+
+  return (
+    <>
+      {Object.entries(commitsGroupedByDate).map(([date, commits]) => (
+        <section
+          className="ml-4 flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4 text-sm"
+          key={date}
+        >
+          <div className="-ml-6 mt-4 flex items-center gap-4 text-gray-400">
+            <CommitIcon />
+            <span>Commits on {date}</span>
+          </div>
+          <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-700 sm:ml-2">
+            {commits.map((commit) => (
+              <article
+                className="border-b border-slate-700 p-4 last:border-b-0"
+                key={commit.sha}
+              >
+                <Commit {...commit} />
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </>
+  );
+};
+
+export default memo(Commits);

@@ -1,9 +1,9 @@
+import Commits from "@/components/Commits";
+import { api } from "@/utils/api";
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Head from "next/head";
-import Commit from "@/components/Commit";
-import { api } from "@/utils/api";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import type { FormEvent } from "react";
 import { useRef, useState } from "react";
 import { z } from "zod";
@@ -108,11 +108,7 @@ const Home: NextPage = () => {
             </meter>
           </div>
         )}
-        <div className="flex flex-col gap-4">
-          {commits.data?.map((commit) => (
-            <Commit {...commit} key={commit.sha} />
-          ))}
-        </div>
+        {commits.data && <Commits commits={commits.data} />}
         {commits && (
           <div className="text-red-500">{commits.error?.message}</div>
         )}
