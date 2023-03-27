@@ -7,13 +7,15 @@ const commitSchema = z.object({
   sha: z.string(),
   html_url: z.string(),
   commit: z.object({
-    url: z.string(),
-    committer: z.object({
+    author: z.object({
       name: z.string(),
       email: z.string(),
       date: z.string(),
     }),
     message: z.string(),
+  }),
+  author: z.object({
+    avatar_url: z.string(),
   }),
 });
 
@@ -89,12 +91,20 @@ export const appRouter = createTRPCRouter({
       })) as unknown;
 
       const commits = z.array(commitSchema).parse(commitsJson);
-      const analyzedCommits = commits.map((commit) => ({
-        ...commit,
+      const analyzedAndFormattedCommits = commits.map((commit) => ({
+        sha: commit.sha,
+        html_url: commit.html_url,
+        message: commit.commit.message,
+        author: {
+          name: commit.commit.author.name,
+          email: commit.commit.author.email,
+          date: commit.commit.author.date,
+          avatar_url: commit.author.avatar_url,
+        },
         sentiment: sentiment.analyze(commit.commit.message),
       }));
 
-      return analyzedCommits;
+      return analyzedAndFormattedCommits;
     }),
 });
 

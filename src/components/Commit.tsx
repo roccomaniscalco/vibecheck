@@ -1,5 +1,7 @@
 import { useState } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
+import type { RouterOutputs } from "@/utils/api";
+import Image from "next/image";
 
 type HighlightProps = { text: string; positive: string[]; negative: string[] };
 const Highlight = (props: HighlightProps) => {
@@ -36,10 +38,14 @@ const Highlight = (props: HighlightProps) => {
   );
 };
 
-const Commit = (props: HighlightProps) => {
+type CommitProps = RouterOutputs["getCommits"][0];
+const Commit = (props: CommitProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [summary, description] = props.text.split("\n\n", 2) as [string, ...string[]];
+  const [summary, description] = props.message.split("\n\n", 2) as [
+    string,
+    ...string[]
+  ];
 
   return (
     <div className="rounded-md border border-slate-200 p-4 font-mono text-sm dark:border-slate-700">
@@ -50,16 +56,16 @@ const Commit = (props: HighlightProps) => {
       >
         <div className="flex items-center justify-between">
           <div className="flex-nowrap">
-            <h4 className="text-sm font-semibold inline">
+            <h4 className="inline text-sm font-semibold">
               <Highlight
                 text={summary}
-                positive={props.positive}
-                negative={props.negative}
+                positive={props.sentiment.positive}
+                negative={props.sentiment.negative}
               />
             </h4>
             {description && (
               <Collapsible.Trigger asChild>
-                <button className="rounded-md bg-slate-700 inline px-1 ml-2">
+                <button className="ml-2 inline rounded-md bg-slate-700 px-1">
                   …
                 </button>
               </Collapsible.Trigger>
@@ -71,13 +77,19 @@ const Commit = (props: HighlightProps) => {
             <pre className="whitespace-pre-wrap text-gray-300">
               <Highlight
                 text={description}
-                positive={props.positive}
-                negative={props.negative}
+                positive={props.sentiment.positive}
+                negative={props.sentiment.negative}
               />
             </pre>
           </Collapsible.Content>
         )}
       </Collapsible.Root>
+      <Image
+      width={32}
+      height={32}
+        src={`${props.author.avatar_url}`}
+        alt={`${props.author.name} avatar`}
+      />
     </div>
   );
 };
