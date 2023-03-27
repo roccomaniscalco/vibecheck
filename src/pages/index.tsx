@@ -74,7 +74,7 @@ const Home: NextPage = () => {
         <div>
           {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
           <button
-            className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
             onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {sessionData ? "Sign out" : "Sign in"}
@@ -83,11 +83,7 @@ const Home: NextPage = () => {
 
         <div className="flex flex-col items-center justify-center py-2">
           <form onSubmit={handleSearchSubmit}>
-            <input
-              type="text"
-              className="bg-slate-700 text-white"
-              ref={searchInputRef}
-            />
+            <input type="text" className="bg-slate-700" ref={searchInputRef} />
             <input type="submit" value="search" />
           </form>
           <div>
@@ -100,11 +96,10 @@ const Home: NextPage = () => {
 
         {rateLimit && (
           <div className="m-12">
-            <label className="text-white" htmlFor="resource limit">
+            <label htmlFor="resource limit">
               {rateLimit.percentageUsed}% Resource Usage
             </label>
             <meter
-              className="text-white"
               id="resource limit"
               value={rateLimit.resources.core.used}
               max={rateLimit.resources.core.limit}
@@ -113,20 +108,11 @@ const Home: NextPage = () => {
             </meter>
           </div>
         )}
-        {commits.data?.map((commit) => (
-          <div key={commit.sha} className="my-4 break-words">
-            <Commit {...commit} />
-            <span
-              className={
-                commit.sentiment.score > 0
-                  ? "text-green-200"
-                  : "text-yellow-200"
-              }
-            >
-              {commit.sentiment.score}
-            </span>
-          </div>
-        ))}
+        <div className="flex flex-col gap-4">
+          {commits.data?.map((commit) => (
+            <Commit {...commit} key={commit.sha} />
+          ))}
+        </div>
         {commits && (
           <div className="text-red-500">{commits.error?.message}</div>
         )}

@@ -27,9 +27,9 @@ const Highlight = (props: HighlightProps) => {
       {chunks.map(({ text, isDistinct, isPositive, isNegative, id }) => (
         <span
           key={id}
-          className={`${isPositive && isDistinct ? "bg-green-800" : ""} ${
-            isNegative && isDistinct ? "bg-red-800" : ""
-          }`}
+          className={`${
+            isPositive && isDistinct ? "bg-green-900 text-white" : ""
+          } ${isNegative && isDistinct ? "bg-red-900 text-white" : ""}`}
         >
           {text}
         </span>
@@ -48,15 +48,15 @@ const Commit = (props: CommitProps) => {
   ];
 
   return (
-    <div className="rounded-md border border-slate-200 p-4 font-mono text-sm dark:border-slate-700">
+    <div className="rounded-md border border-slate-200 p-4 dark:border-slate-700 ">
       <Collapsible.Root
         open={isOpen}
         onOpenChange={setIsOpen}
         className="space-y-2"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex-nowrap">
-            <h4 className="inline text-sm font-semibold">
+            <h4 className="inline font-semibold">
               <Highlight
                 text={summary}
                 positive={props.sentiment.positive}
@@ -65,16 +65,23 @@ const Commit = (props: CommitProps) => {
             </h4>
             {description && (
               <Collapsible.Trigger asChild>
-                <button className="ml-2 inline rounded-md bg-slate-700 px-1">
+                <button className="ml-2 inline rounded-md bg-slate-700 px-1 ">
                   …
                 </button>
               </Collapsible.Trigger>
             )}
           </div>
+          <div
+            className={`${
+              props.sentiment.score < 0 ? "text-red-400" : "text-green-400"
+            } font-semibold`}
+          >
+            {props.sentiment.score !== 0 && props.sentiment.score}
+          </div>
         </div>
         {description && (
           <Collapsible.Content className="space-y-2">
-            <pre className="whitespace-pre-wrap text-gray-300">
+            <pre className="whitespace-pre-wrap text-sm text-gray-400">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -84,12 +91,16 @@ const Commit = (props: CommitProps) => {
           </Collapsible.Content>
         )}
       </Collapsible.Root>
-      <Image
-      width={32}
-      height={32}
-        src={`${props.author.avatar_url}`}
-        alt={`${props.author.name} avatar`}
-      />
+      <div className="mt-2 flex items-center gap-2">
+        <Image
+          className="block rounded-full"
+          width={20}
+          height={20}
+          src={`${props.author.avatar_url}?size=20`}
+          alt={`${props.author.name} avatar`}
+        />
+        <span>{props.author.login}</span>
+      </div>
     </div>
   );
 };

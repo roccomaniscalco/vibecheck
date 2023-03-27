@@ -38,7 +38,7 @@ const CommitLineGraph = ({ ownerRepo }: { ownerRepo: string }) => {
   );
 
   return (
-    <div className="h-96 w-full text-white">
+    <div className="h-96 w-full">
       {commits.error && (
         <div className="rounded-md bg-red-800 p-4">{commits.error.message}</div>
       )}

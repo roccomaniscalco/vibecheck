@@ -9,12 +9,12 @@ const commitSchema = z.object({
   commit: z.object({
     author: z.object({
       name: z.string(),
-      email: z.string(),
       date: z.string(),
     }),
     message: z.string(),
   }),
   author: z.object({
+    login: z.string(),
     avatar_url: z.string(),
   }),
 });
@@ -96,8 +96,8 @@ export const appRouter = createTRPCRouter({
         html_url: commit.html_url,
         message: commit.commit.message,
         author: {
+          login: commit.author.login,
           name: commit.commit.author.name,
-          email: commit.commit.author.email,
           date: commit.commit.author.date,
           avatar_url: commit.author.avatar_url,
         },
