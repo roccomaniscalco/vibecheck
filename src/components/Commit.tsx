@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import type { RouterOutputs } from "@/utils/api";
 import Image from "next/image";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
 type HighlightProps = { text: string; positive: string[]; negative: string[] };
 const Highlight = (props: HighlightProps) => {
@@ -55,7 +56,7 @@ const Commit = (props: CommitProps) => {
         className="space-y-2"
       >
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-nowrap">
+          <div>
             <h4 className="inline font-semibold">
               <Highlight
                 text={summary}
@@ -65,18 +66,28 @@ const Commit = (props: CommitProps) => {
             </h4>
             {description && (
               <Collapsible.Trigger asChild>
-                <button className="ml-2 inline rounded-md bg-slate-700 px-1 ">
+                <button className="ml-2 inline rounded-md bg-slate-700 px-1 hover:bg-slate-600">
                   …
                 </button>
               </Collapsible.Trigger>
             )}
           </div>
-          <div
-            className={`${
-              props.sentiment.score < 0 ? "text-red-400" : "text-green-400"
-            } font-semibold`}
-          >
-            {props.sentiment.score !== 0 && props.sentiment.score}
+          <div className="flex items-center gap-4">
+            <div
+              className={`${
+                props.sentiment.score < 0 ? "text-red-400" : "text-green-400"
+              } font-semibold`}
+            >
+              {props.sentiment.score !== 0 && props.sentiment.score}
+            </div>
+            <a
+              href={props.html_url}
+              target="_blank"
+              title="View commit on Github"
+              className="text-slate-400 hover:text-slate-300"
+            >
+              <GitHubLogoIcon className="h-6" />
+            </a>
           </div>
         </div>
         {description && (
@@ -105,4 +116,4 @@ const Commit = (props: CommitProps) => {
   );
 };
 
-export default Commit;
+export default memo(Commit);
