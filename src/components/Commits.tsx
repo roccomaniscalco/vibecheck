@@ -1,7 +1,11 @@
 import type { RouterOutputs } from "@/utils/api";
 import { dateDiff } from "@/utils/dateDiff";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { CommitIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
+import {
+  CommitIcon,
+  DotsHorizontalIcon,
+  GitHubLogoIcon,
+} from "@radix-ui/react-icons";
 import Image from "next/image";
 import { memo, useState } from "react";
 
@@ -51,14 +55,10 @@ const Commit = (props: CommitProps) => {
 
   return (
     <>
-      <Collapsible.Root
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        className="space-y-2"
-      >
-        <div className="flex items-start justify-between gap-4">
+      <Collapsible.Root open={isOpen} onOpenChange={setIsOpen}>
+        <div className="flex items-center justify-between gap-4">
           <div>
-            <h4 className="inline break-words font-semibold">
+            <h4 className="inline break-words align-middle font-semibold">
               <Highlight
                 text={summary}
                 positive={props.sentiment.positive}
@@ -67,8 +67,8 @@ const Commit = (props: CommitProps) => {
             </h4>
             {description && (
               <Collapsible.Trigger asChild>
-                <button className="ml-2 inline rounded-md bg-slate-700 px-1 hover:bg-slate-600">
-                  …
+                <button className="ml-2 inline rounded-md bg-slate-700 px-1 align-middle hover:bg-slate-600">
+                  <DotsHorizontalIcon />
                 </button>
               </Collapsible.Trigger>
             )}
@@ -94,8 +94,8 @@ const Commit = (props: CommitProps) => {
           </div>
         </div>
         {description && (
-          <Collapsible.Content>
-            <pre className="mb-2 whitespace-pre-wrap break-words text-sm text-gray-400">
+          <Collapsible.Content className="space-y-2">
+            <pre className="my-3 whitespace-pre-wrap break-words text-xs text-gray-400">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -105,7 +105,7 @@ const Commit = (props: CommitProps) => {
           </Collapsible.Content>
         )}
       </Collapsible.Root>
-      <div className="mt-1 flex items-center gap-2">
+      <div className="mt-2 flex items-center gap-2">
         <Image
           className="block rounded-full"
           width={20}
@@ -150,7 +150,7 @@ const Commits = (props: { commits: CommitProps[] }) => {
           <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-700 sm:ml-2">
             {commits.map((commit) => (
               <article
-                className="border-b border-slate-700 p-4 last:border-b-0"
+                className="border-b border-slate-700 py-3 px-4 last:border-b-0"
                 key={commit.sha}
               >
                 <Commit {...commit} />
