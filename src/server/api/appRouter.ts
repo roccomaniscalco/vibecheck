@@ -146,8 +146,6 @@ export const appRouter = createTRPCRouter({
         });
       })) as unknown;
 
-      console.log(reposJson);
-
       const repos = reposSchema.parse(reposJson);
       return repos.items;
     }),
