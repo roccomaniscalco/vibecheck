@@ -55,7 +55,11 @@ const Commit = (props: CommitProps) => {
 
   return (
     <>
-      <Collapsible.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Collapsible.Root
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        className="space-y-2"
+      >
         <div className="flex items-center justify-between gap-4">
           <div>
             <h4 className="inline break-words align-middle font-semibold">
@@ -66,10 +70,11 @@ const Commit = (props: CommitProps) => {
               />
             </h4>
             {description && (
-              <Collapsible.Trigger asChild>
-                <button className="ml-2 inline rounded-md bg-slate-700 px-1 align-middle hover:bg-slate-600">
-                  <DotsHorizontalIcon />
-                </button>
+              <Collapsible.Trigger
+                asChild
+                className="ml-2 inline w-6 rounded-md bg-slate-700 px-1 align-middle hover:bg-slate-600"
+              >
+                <DotsHorizontalIcon />
               </Collapsible.Trigger>
             )}
           </div>
