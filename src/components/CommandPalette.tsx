@@ -68,7 +68,7 @@ export function CommandPalette() {
   return (
     <>
       <button
-        className="w-full max-w-xs rounded-md bg-slate-800 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
+        className="w-full max-w-xs rounded-md bg-slate-800 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
         onClick={handleOpenButtonClick}
       >
         <div className="flex items-center px-4">
