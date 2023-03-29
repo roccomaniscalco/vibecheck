@@ -36,6 +36,8 @@ export function CommandPalette() {
     { query: debouncedSearchTerm },
     {
       enabled: searchTerm.length > 0,
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
       keepPreviousData: true,
       onSettled: (): void => {
         void apiContext.getRateLimit.invalidate();
@@ -68,7 +70,7 @@ export function CommandPalette() {
   return (
     <>
       <button
-        className="w-full max-w-xs rounded-md bg-slate-800 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900"
+        className="w-full rounded-md bg-slate-800 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 dark:focus-visible:ring-slate-400 dark:focus-visible:ring-offset-slate-900 sm:w-56"
         onClick={handleOpenButtonClick}
       >
         <div className="flex items-center px-4">
@@ -88,7 +90,7 @@ export function CommandPalette() {
           onValueChange={handleSearchInputChange}
         />
         <div className="h-0">
-          {showLoadingBar && <WavyGradient className="-my-[1px]  h-[1px]" />}
+          {showLoadingBar && <WavyGradient className="-my-[1px] h-[1px]" />}
         </div>
         <CommandList>
           {showNoneFound && <CommandEmpty>No repositories found.</CommandEmpty>}

@@ -34,8 +34,8 @@ const Highlight = (props: HighlightProps) => {
         <span
           key={id}
           className={`${
-            isPositive && isDistinct ? "bg-green-900 text-white" : ""
-          } ${isNegative && isDistinct ? "bg-red-900 text-white" : ""}`}
+            isPositive && isDistinct ? "bg-green-900 text-slate-300" : ""
+          } ${isNegative && isDistinct ? "bg-red-900 text-slate-300" : ""}`}
         >
           {text}
         </span>
@@ -60,9 +60,9 @@ const Commit = (props: CommitProps) => {
         onOpenChange={setIsOpen}
         className="space-y-2"
       >
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h4 className="inline break-words align-middle font-semibold">
+            <h4 className="inline align-middle font-semibold">
               <Highlight
                 text={summary}
                 positive={props.sentiment.positive}
@@ -74,7 +74,9 @@ const Commit = (props: CommitProps) => {
                 asChild
                 className="ml-2 inline w-6 rounded-md bg-slate-700 px-1 align-middle hover:bg-slate-600"
               >
-                <DotsHorizontalIcon />
+                <button>
+                  <DotsHorizontalIcon />
+                </button>
               </Collapsible.Trigger>
             )}
           </div>
@@ -100,7 +102,7 @@ const Commit = (props: CommitProps) => {
         </div>
         {description && (
           <Collapsible.Content className="space-y-2">
-            <pre className="my-3 whitespace-pre-wrap break-words text-xs text-gray-400">
+            <pre className="my-3 whitespace-pre-wrap text-sm text-slate-500">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -120,7 +122,7 @@ const Commit = (props: CommitProps) => {
         />
         <span>
           <span className="font-semibold">{props.author.login}</span>{" "}
-          <span className="text-gray-400">
+          <span className="text-slate-500">
             committed {dateDiff(new Date(props.date), new Date())}
           </span>
         </span>
@@ -145,17 +147,17 @@ const Commits = (props: { commits: CommitProps[] }) => {
     <>
       {Object.entries(commitsByDate).map(([date, commits]) => (
         <section
-          className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4 text-sm"
+          className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
           key={date}
         >
-          <div className="-ml-6 mt-4 flex items-center gap-4 text-gray-400">
+          <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-500">
             <CommitIcon />
             <span>Commits on {date}</span>
           </div>
-          <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-700 sm:ml-2">
+          <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">
             {commits.map((commit) => (
               <article
-                className="border-b border-slate-700 py-3 px-4 last:border-b-0"
+                className="border-b border-slate-800 py-3 px-4 last:border-b-0"
                 key={commit.sha}
               >
                 <Commit {...commit} />
