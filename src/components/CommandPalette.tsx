@@ -35,7 +35,7 @@ export function CommandPalette() {
   const repoSearchResults = api.searchRepos.useQuery(
     { query: debouncedSearchTerm },
     {
-      enabled: searchTerm.length > 0,
+      enabled: debouncedSearchTerm.length > 0,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,
@@ -102,6 +102,13 @@ export function CommandPalette() {
                 </CommandItem>
               ))}
             </CommandGroup>
+          )}
+          {repoSearchResults.isError && (
+            <CommandEmpty>
+              <p className="mx-auto w-max bg-red-500 font-semibold text-slate-200 rounded-md py-1 px-2">
+                Error: {repoSearchResults.error.message}
+              </p>
+            </CommandEmpty>
           )}
         </CommandList>
       </CommandDialog>

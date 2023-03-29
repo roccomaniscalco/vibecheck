@@ -129,8 +129,9 @@ export const appRouter = createTRPCRouter({
         });
       }
 
+      const encodedQuery = encodeURIComponent(input.query);
       const reposJson = (await fetch(
-        `https://api.github.com/search/repositories?q=${input.query}`,
+        `https://api.github.com/search/repositories?q=${encodedQuery}`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,
@@ -139,6 +140,12 @@ export const appRouter = createTRPCRouter({
       ).then((res) => {
         if (res.ok) {
           return res.json();
+        }
+        if (res.status === 422) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid query",
+          })
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
