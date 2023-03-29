@@ -51,6 +51,20 @@ export function CommandPalette() {
     setSearchTerm(newSearchTerm);
   };
 
+  const showLoadingBar =
+    (isDebouncing ||
+      repoSearchResults.isFetching ||
+      repoSearchResults.isLoading) &&
+    searchTerm.length > 0;
+
+  const showNoneFound =
+    searchTerm.length > 0 && repoSearchResults.data?.length === 0;
+
+  const showSearchResults =
+    searchTerm.length > 0 &&
+    repoSearchResults.data &&
+    repoSearchResults.data?.length > 0;
+
   return (
     <>
       <button
@@ -74,20 +88,14 @@ export function CommandPalette() {
           onValueChange={handleSearchInputChange}
         />
         <div className="h-0">
-          {(isDebouncing ||
-            ((repoSearchResults.isFetching || repoSearchResults.isLoading) &&
-              !repoSearchResults.isInitialLoading)) && (
-            <WavyGradient className="-py-[1px] h-[1px]" />
-          )}
+          {showLoadingBar && <WavyGradient className="-my-[1px]  h-[1px]" />}
         </div>
         <CommandList>
-          {searchTerm.length > 0 && (
-            <CommandEmpty>No results found.</CommandEmpty>
-          )}
-          {repoSearchResults.data?.[0] && searchTerm.length > 0 && (
+          {showNoneFound && <CommandEmpty>No repositories found.</CommandEmpty>}
+          {showSearchResults && (
             <CommandGroup>
-              {repoSearchResults.data.map((repo) => (
-                <CommandItem key={repo.id} >
+              {repoSearchResults.data?.map((repo) => (
+                <CommandItem key={repo.id}>
                   <span>{repo.full_name}</span>
                 </CommandItem>
               ))}
