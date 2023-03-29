@@ -98,14 +98,14 @@ export function CommandPalette() {
             <CommandGroup>
               {repoSearchResults.data?.map((repo) => (
                 <CommandItem key={repo.id}>
-                  <span>{repo.full_name}</span>
+                  <span className="truncate">{repo.full_name}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
           )}
           {repoSearchResults.isError && (
             <CommandEmpty>
-              <p className="mx-auto w-max bg-red-500 font-semibold text-slate-200 rounded-md py-1 px-2">
+              <p className="mx-auto w-max rounded-md bg-red-500 py-1 px-2 font-semibold text-slate-200">
                 Error: {repoSearchResults.error.message}
               </p>
             </CommandEmpty>
