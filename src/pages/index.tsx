@@ -1,4 +1,3 @@
-import { CommandPalette } from "@/components/CommandPalette";
 import Commits from "@/components/Commits";
 import { api } from "@/utils/api";
 import { type NextPage } from "next";
@@ -53,8 +52,6 @@ const Home: NextPage = () => {
             {sessionData ? "Sign out" : "Sign in"}
           </button>
         </div>
-
-        <CommandPalette />
 
         {rateLimit.data && (
           <div className="m-12">
