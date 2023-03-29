@@ -1,3 +1,4 @@
+import { Anchor, Button } from "@/components/ui/clickable";
 import type { RouterOutputs } from "@/utils/api";
 import { dateDiff } from "@/utils/dateDiff";
 import * as Collapsible from "@radix-ui/react-collapsible";
@@ -33,9 +34,9 @@ const Highlight = (props: HighlightProps) => {
       {chunks.map(({ text, isDistinct, isPositive, isNegative, id }) => (
         <span
           key={id}
-          className={`${
-            isPositive && isDistinct ? "bg-green-900 text-slate-300" : ""
-          } ${isNegative && isDistinct ? "bg-red-900 text-slate-300" : ""}`}
+          className={`${isPositive && isDistinct ? "bg-green-900" : ""} ${
+            isNegative && isDistinct ? "bg-red-900" : ""
+          }`}
         >
           {text}
         </span>
@@ -70,13 +71,10 @@ const Commit = (props: CommitProps) => {
               />
             </h4>
             {description && (
-              <Collapsible.Trigger
-                asChild
-                className="ml-2 inline w-6 rounded-md bg-slate-700 px-1 align-middle hover:bg-slate-600"
-              >
-                <button>
+              <Collapsible.Trigger asChild>
+                <Button className="ml-2 inline px-2 py-1 align-middle">
                   <DotsHorizontalIcon />
-                </button>
+                </Button>
               </Collapsible.Trigger>
             )}
           </div>
@@ -90,19 +88,18 @@ const Commit = (props: CommitProps) => {
             >
               {props.sentiment.score}
             </div>
-            <a
+            <Anchor
               href={props.html_url}
               target="_blank"
               title="View commit on Github"
-              className="text-slate-400 hover:text-slate-300"
             >
               <GitHubLogoIcon />
-            </a>
+            </Anchor>
           </div>
         </div>
         {description && (
           <Collapsible.Content className="space-y-2">
-            <pre className="my-3 whitespace-pre-wrap text-sm text-slate-500">
+            <pre className="my-3 whitespace-pre-wrap text-sm text-slate-400">
               <Highlight
                 text={description}
                 positive={props.sentiment.positive}
@@ -122,7 +119,7 @@ const Commit = (props: CommitProps) => {
         />
         <span>
           <span className="font-semibold">{props.author.login}</span>{" "}
-          <span className="text-slate-500">
+          <span className="text-slate-400">
             committed {dateDiff(new Date(props.date), new Date())}
           </span>
         </span>
@@ -150,7 +147,7 @@ const Commits = (props: { commits: CommitProps[] }) => {
           className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
           key={date}
         >
-          <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-500">
+          <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
             <CommitIcon />
             <span>Commits on {date}</span>
           </div>

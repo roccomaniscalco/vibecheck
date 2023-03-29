@@ -11,12 +11,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <header className="sticky top-0 z-20 border-b border-slate-800 bg-gray-50/80 backdrop-blur dark:bg-slate-900/80 ">
+      <header className="sticky top-0 z-50 border-b border-slate-800 bg-gray-50/80 backdrop-blur dark:bg-slate-900/80 ">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <CommandPalette />
         </div>
       </header>
-      <Component {...pageProps} />
+      <main className="mx-auto max-w-6xl p-4">
+        <Component {...pageProps} />
+      </main>
     </SessionProvider>
   );
 };
