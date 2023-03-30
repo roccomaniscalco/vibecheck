@@ -92,8 +92,8 @@ export function CommandPalette() {
           value={searchTerm}
           onValueChange={handleSearchInputChange}
         />
-        <div className="h-0 -my-[1px]">
-          {showLoadingBar && <LoadingGradient />}
+        <div className="h-0">
+          {showLoadingBar && <LoadingGradient className="-my-[1px]" />}
         </div>
         <CommandList>
           {showNoneFound && <CommandEmpty>No repositories found.</CommandEmpty>}
