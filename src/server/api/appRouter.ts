@@ -13,10 +13,12 @@ const commitSchema = z.object({
     }),
     message: z.string(),
   }),
-  author: z.object({
-    login: z.string(),
-    avatar_url: z.string(),
-  }).nullable(),
+  author: z
+    .object({
+      login: z.string(),
+      avatar_url: z.string(),
+    })
+    .nullable(),
 });
 
 const rateLimitSchema = z.object({
@@ -129,9 +131,11 @@ export const appRouter = createTRPCRouter({
         });
       }
 
-      const encodedQuery = encodeURIComponent(input.query);
+      const query = encodeURIComponent(input.query);
+      const resultsPerPage = encodeURIComponent(5);
+      const pageCount = encodeURIComponent(1);
       const reposJson = (await fetch(
-        `https://api.github.com/search/repositories?q=${encodedQuery}`,
+        `https://api.github.com/search/repositories?q=${query}&per_page=${resultsPerPage}&page=${pageCount}`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,
@@ -145,7 +149,7 @@ export const appRouter = createTRPCRouter({
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Invalid query",
-          })
+          });
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
