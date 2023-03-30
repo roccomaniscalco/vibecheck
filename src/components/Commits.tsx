@@ -34,9 +34,9 @@ const Highlight = (props: HighlightProps) => {
       {chunks.map(({ text, isDistinct, isPositive, isNegative, id }) => (
         <span
           key={id}
-          className={`${isPositive && isDistinct ? "bg-green-900 text-slate-200" : ""} ${
-            isNegative && isDistinct ? "bg-red-900 text-slate-200" : ""
-          }`}
+          className={`${
+            isPositive && isDistinct ? "bg-green-900 text-slate-200" : ""
+          } ${isNegative && isDistinct ? "bg-red-900 text-slate-200" : ""}`}
         >
           {text}
         </span>
@@ -49,10 +49,11 @@ type CommitProps = RouterOutputs["getCommits"][0];
 const Commit = (props: CommitProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [summary, description] = props.message.split("\n\n", 2) as [
+  const [summary, ...restMessage] = props.message.split("\n\n") as [
     string,
     ...string[]
   ];
+  const description = restMessage.join("\n\n");
 
   return (
     <>
