@@ -1,5 +1,6 @@
 import { Anchor, Button } from "@/components/ui/clickable";
 import { api, type RouterOutputs } from "@/utils/api";
+import { githubAscii } from "@/utils/ascii";
 import { dateDiff } from "@/utils/dateDiff";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import {
@@ -139,6 +140,27 @@ const Commit = (props: CommitProps) => {
   );
 };
 
+type CommitErrorProps = {
+  error: {
+    httpStatus?: number;
+    message: string;
+  };
+};
+const CommitError = (props: CommitErrorProps) => {
+  return (
+    <div className="absolute inset-0 my-4 grid place-items-center">
+      <pre className="text-center text-[min(2vw,12px)] leading-[2ch] text-slate-700">
+        {githubAscii}
+      </pre>
+      <p className="absolute font-semibold text-slate-400">
+        {props.error.httpStatus &&
+          `${props.error.httpStatus}: `}
+        {props.error.message}
+      </p>
+    </div>
+  );
+};
+
 type CommitTimelineProps = { repo: string | undefined };
 const CommitTimeline = (props: CommitTimelineProps) => {
   const commits = api.getCommits.useQuery(
@@ -163,6 +185,17 @@ const CommitTimeline = (props: CommitTimelineProps) => {
       },
     }
   );
+
+  if (commits.error) {
+    return (
+      <CommitError
+        error={{
+          httpStatus: commits.error.data?.httpStatus,
+          message: commits.error.message,
+        }}
+      />
+    );
+  }
 
   return (
     <>

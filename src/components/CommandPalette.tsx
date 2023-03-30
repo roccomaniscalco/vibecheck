@@ -116,7 +116,9 @@ export function CommandPalette() {
           {repoSearchResults.isError && (
             <CommandEmpty>
               <p className="mx-auto w-max rounded-md bg-red-500 py-1 px-2 font-semibold">
-                Error: {repoSearchResults.error.message}
+                {repoSearchResults.error.data?.httpStatus &&
+                  `${repoSearchResults.error.data.httpStatus}: `}
+                {repoSearchResults.error.message}
               </p>
             </CommandEmpty>
           )}
