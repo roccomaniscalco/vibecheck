@@ -50,17 +50,11 @@ type CommitProps = RouterOutputs["getCommits"][0];
 const Commit = (props: CommitProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [firstLine, ...restMessage] = props.message.split("\n\n") as [
+  const [summary, ...restMessage] = props.message.split("\n\n") as [
     string,
     ...string[]
   ];
-  const [summary, description] =
-    firstLine && firstLine.length > 69
-      ? [
-          `${props.message.substring(0, 69)}...`,
-          `...${props.message.substring(69)}`,
-        ]
-      : [firstLine, restMessage.join("\n\n")];
+  const description = restMessage.join("\n")
 
   return (
     <article className="border-b border-slate-800 py-3 px-4 last:border-b-0">
