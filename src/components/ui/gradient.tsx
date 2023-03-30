@@ -4,12 +4,12 @@ type WavyGradientProps = {
   className?: string;
 };
 
-export function WavyGradient({ className }: WavyGradientProps) {
+export function LoadingGradient({ className }: WavyGradientProps) {
   return (
     <div
       className={cn(
         className,
-        "background-animate bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500"
+        "h-[1px] animate-slide bg-gradient-to-r from-slate-800 via-pink-500 to-slate-800 bg-[size:400%]"
       )}
     ></div>
   );

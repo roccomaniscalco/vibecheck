@@ -7,7 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { WavyGradient } from "@/components/ui/gradient";
+import { LoadingGradient } from "@/components/ui/gradient";
 import { api } from "@/utils/api";
 import { useDebounce } from "@/utils/useDebounce";
 import { FileIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
@@ -92,8 +92,8 @@ export function CommandPalette() {
           value={searchTerm}
           onValueChange={handleSearchInputChange}
         />
-        <div className="h-0">
-          {showLoadingBar && <WavyGradient className="-my-[1px] h-[1px]" />}
+        <div className="h-0 -my-[1px]">
+          {showLoadingBar && <LoadingGradient />}
         </div>
         <CommandList>
           {showNoneFound && <CommandEmpty>No repositories found.</CommandEmpty>}

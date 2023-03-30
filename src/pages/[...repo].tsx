@@ -1,6 +1,6 @@
 import { CommandPalette } from "@/components/CommandPalette";
 import CommitTimeline from "@/components/CommitTimeline";
-import { WavyGradient } from "@/components/ui/gradient";
+import { LoadingGradient } from "@/components/ui/gradient";
 import { api } from "@/utils/api";
 import { FileIcon } from "@radix-ui/react-icons";
 import Head from "next/head";
@@ -40,9 +40,7 @@ const Repo = () => {
           <h1 className="min-w-0 flex-1 truncate font-semibold">{repo}</h1>
           <CommandPalette />
         </div>
-        <div className="h-0">
-          {showLoadingBar && <WavyGradient className="-my-[1px] h-[1px]" />}
-        </div>
+        <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
       <main className="mx-auto max-w-4xl px-4 pb-4">
         <CommitTimeline repo={repo} />
