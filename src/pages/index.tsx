@@ -1,4 +1,3 @@
-import Commits from "@/components/Commits";
 import { api } from "@/utils/api";
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -62,7 +61,6 @@ const Home: NextPage = () => {
 
       <CommitGraph repo={searchTerm} />
 
-      {commits.data && <Commits commits={commits.data} />}
       {commits && <div className="text-red-500">{commits.error?.message}</div>}
     </>
   );

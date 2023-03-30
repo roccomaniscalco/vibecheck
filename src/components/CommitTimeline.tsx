@@ -1,5 +1,5 @@
 import { Anchor, Button } from "@/components/ui/clickable";
-import type { RouterOutputs } from "@/utils/api";
+import { api, type RouterOutputs } from "@/utils/api";
 import { dateDiff } from "@/utils/dateDiff";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import {
@@ -56,14 +56,14 @@ const Commit = (props: CommitProps) => {
   const description = restMessage.join("\n\n");
 
   return (
-    <>
+    <article className="border-b border-slate-800 py-3 px-4 last:border-b-0">
       <Collapsible.Root
         open={isOpen}
         onOpenChange={setIsOpen}
         className="space-y-2"
       >
         <div className="flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0 flex-1">
             <h4 className="inline align-middle font-semibold">
               <Highlight
                 text={summary}
@@ -129,47 +129,56 @@ const Commit = (props: CommitProps) => {
           </>
         )}
       </div>
-    </>
+    </article>
   );
 };
 
-const Commits = (props: { commits: CommitProps[] }) => {
-  const commitsByDate = props.commits.reduce((result, commit) => {
-    const date = new Date(commit.date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    if (!result[date]) result[date] = [];
-    result[date]?.push(commit);
-    return result;
-  }, {} as Record<string, CommitProps[]>);
+type CommitTimelineProps = { repo: string | undefined };
+const CommitTimeline = (props: CommitTimelineProps) => {
+  const commits = api.getCommits.useQuery(
+    { repo: props.repo as string },
+    {
+      enabled: Boolean(props.repo),
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      keepPreviousData: true,
+      select: (data) => {
+        // group commits by date
+        return data.reduce((result, commit) => {
+          const date = new Date(commit.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          if (!result[date]) result[date] = [];
+          result[date]?.push(commit);
+          return result;
+        }, {} as Record<string, CommitProps[]>);
+      },
+    }
+  );
 
   return (
     <>
-      {Object.entries(commitsByDate).map(([date, commits]) => (
-        <section
-          className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
-          key={date}
-        >
-          <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
-            <CommitIcon />
-            <span>Commits on {date}</span>
-          </div>
-          <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">
-            {commits.map((commit) => (
-              <article
-                className="border-b border-slate-800 py-3 px-4 last:border-b-0"
-                key={commit.sha}
-              >
-                <Commit {...commit} />
-              </article>
-            ))}
-          </div>
-        </section>
-      ))}
+      {commits.data &&
+        Object.entries(commits.data).map(([date, commits]) => (
+          <section
+            className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
+            key={date}
+          >
+            <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
+              <CommitIcon />
+              <span>Commits on {date}</span>
+            </div>
+            <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">
+              {commits.map((commit) => (
+                <Commit {...commit} key={commit.sha} />
+              ))}
+            </div>
+          </section>
+        ))}
     </>
   );
 };
 
-export default memo(Commits);
+export default memo(CommitTimeline);
