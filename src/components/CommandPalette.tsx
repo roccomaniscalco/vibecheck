@@ -77,12 +77,10 @@ export function CommandPalette() {
 
   return (
     <>
-      <Button className="w-full sm:w-56" onClick={handleOpenButtonClick}>
-        <div className="flex items-center px-4">
-          <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-          <p className="flex h-11 w-full py-3 text-sm text-slate-400">
-            Search GitHub...
-          </p>
+      <Button onClick={handleOpenButtonClick}>
+        <div className="flex items-center gap-2 px-3 py-2">
+          <MagnifyingGlassIcon className="h-4 w-4 opacity-50" />
+          <p className="flex-1 text-left text-sm text-slate-400">Search...</p>
           <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-slate-100 bg-slate-100 px-1.5 font-mono text-[10px] font-medium text-slate-400 opacity-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
             <span className="text-xs">⌘</span>K
           </kbd>
@@ -107,8 +105,10 @@ export function CommandPalette() {
                   value={repo.full_name}
                   onSelect={handleSearchResultSelect}
                 >
-                  <FileIcon className="mr-2 text-slate-400" />
-                  <span className="truncate">{repo.full_name}</span>
+                  <div className="flex gap-2 overflow-hidden">
+                    <FileIcon className="h-5 w-5 text-slate-400" />
+                    <p className="flex-1 truncate">{repo.full_name}</p>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
