@@ -5,10 +5,10 @@ import { Chart } from "react-charts";
 
 type MyDatum = { date: Date; sentimentScore: number };
 
-const CommitGraph = ({ ownerRepo }: { ownerRepo: string }) => {
+const CommitGraph = ({ repo }: { repo: string }) => {
   const commits = api.getCommits.useQuery(
     {
-      ownerRepo,
+      repo,
     },
     {
       select: (data) => ({
@@ -46,7 +46,7 @@ const CommitGraph = ({ ownerRepo }: { ownerRepo: string }) => {
       {commits.data && (
         <Chart
           options={{
-            data: [commits.data, ],
+            data: [commits.data],
             primaryAxis,
             secondaryAxes,
             dark: true,

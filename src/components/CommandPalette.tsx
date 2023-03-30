@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/clickable";
 import {
   CommandDialog,
   CommandEmpty,
@@ -6,18 +7,17 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { WavyGradient } from "@/components/ui/gradient";
 import { api } from "@/utils/api";
 import { useDebounce } from "@/utils/useDebounce";
 import { FileIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/clickable";
-import { WavyGradient } from "@/components/ui/gradient";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-
   const [debouncedSearchTerm] = useDebounce(searchTerm, 400);
   const isDebouncing = debouncedSearchTerm !== searchTerm;
 
@@ -45,6 +45,13 @@ export function CommandPalette() {
       },
     }
   );
+
+  const router = useRouter();
+
+  const handleSearchResultSelect = (repoFullName: string) => {
+    setOpen(false);
+    void router.push(`/${repoFullName}`);
+  };
 
   const handleOpenButtonClick = () => {
     setOpen((open) => !open);
@@ -95,7 +102,11 @@ export function CommandPalette() {
           {showSearchResults && (
             <CommandGroup>
               {repoSearchResults.data?.map((repo) => (
-                <CommandItem key={repo.id}>
+                <CommandItem
+                  key={repo.id}
+                  value={repo.full_name}
+                  onSelect={handleSearchResultSelect}
+                >
                   <FileIcon className="mr-2 text-slate-400" />
                   <span className="truncate">{repo.full_name}</span>
                 </CommandItem>

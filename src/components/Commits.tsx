@@ -34,8 +34,8 @@ const Highlight = (props: HighlightProps) => {
       {chunks.map(({ text, isDistinct, isPositive, isNegative, id }) => (
         <span
           key={id}
-          className={`${isPositive && isDistinct ? "bg-green-900" : ""} ${
-            isNegative && isDistinct ? "bg-red-900" : ""
+          className={`${isPositive && isDistinct ? "bg-green-900 text-slate-200" : ""} ${
+            isNegative && isDistinct ? "bg-red-900 text-slate-200" : ""
           }`}
         >
           {text}
@@ -110,19 +110,23 @@ const Commit = (props: CommitProps) => {
         )}
       </Collapsible.Root>
       <div className="mt-2 flex items-center gap-2">
-        <Image
-          className="block rounded-full"
-          width={20}
-          height={20}
-          src={`${props.author.avatar_url}?size=20`}
-          alt={`${props.author.name} avatar`}
-        />
-        <span>
-          <span className="font-semibold">{props.author.login}</span>{" "}
-          <span className="text-slate-400">
-            committed {dateDiff(new Date(props.date), new Date())}
-          </span>
-        </span>
+        {props.author.avatar_url && props.author.login && (
+          <>
+            <Image
+              className="block rounded-full"
+              width={20}
+              height={20}
+              src={`${props.author.avatar_url}?size=20`}
+              alt={`${props.author.name} avatar`}
+            />
+            <span>
+              <span className="font-semibold">{props.author.login}</span>{" "}
+              <span className="text-slate-400">
+                committed {dateDiff(new Date(props.date), new Date())}
+              </span>
+            </span>
+          </>
+        )}
       </div>
     </>
   );

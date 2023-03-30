@@ -16,7 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <CommandPalette />
         </div>
       </header>
-      <main className="mx-auto max-w-6xl p-4">
+      <main className="mx-auto max-w-6xl px-4 pb-4">
         <Component {...pageProps} />
       </main>
     </SessionProvider>

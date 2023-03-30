@@ -16,7 +16,7 @@ const commitSchema = z.object({
   author: z.object({
     login: z.string(),
     avatar_url: z.string(),
-  }),
+  }).nullable(),
 });
 
 const rateLimitSchema = z.object({
@@ -65,9 +65,9 @@ export const appRouter = createTRPCRouter({
   }),
 
   getCommits: protectedProcedure
-    .input(z.object({ ownerRepo: z.string() }))
+    .input(z.object({ repo: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { ownerRepo } = input;
+      const { repo } = input;
 
       // Throw if the user does not have an access token
       if (!ctx.token.accessToken) {
@@ -79,7 +79,7 @@ export const appRouter = createTRPCRouter({
 
       // Fetch the user's commits
       const commitsJson = (await fetch(
-        `https://api.github.com/repos/${ownerRepo}/commits?per_page=100`,
+        `https://api.github.com/repos/${repo}/commits?per_page=100`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,
@@ -108,9 +108,9 @@ export const appRouter = createTRPCRouter({
         message: commit.commit.message,
         date: commit.commit.author.date,
         author: {
-          login: commit.author.login,
+          login: commit.author?.login,
           name: commit.commit.author.name,
-          avatar_url: commit.author.avatar_url,
+          avatar_url: commit.author?.avatar_url,
         },
         sentiment: sentiment.analyze(commit.commit.message),
       }));
