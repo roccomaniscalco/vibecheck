@@ -155,12 +155,12 @@ const CommitError = (props: CommitErrorProps) => {
   );
 };
 
-type CommitTimelineProps = { repo: string | undefined };
+type CommitTimelineProps = { repoFullName: string | undefined };
 const CommitTimeline = (props: CommitTimelineProps) => {
-  const commits = api.getCommits.useQuery(
-    { repo: props.repo as string },
+  const commitsByDate = api.getCommits.useQuery(
+    { repoFullName: props.repoFullName as string },
     {
-      enabled: !!props.repo,
+      enabled: !!props.repoFullName,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,
@@ -180,12 +180,12 @@ const CommitTimeline = (props: CommitTimelineProps) => {
     }
   );
 
-  if (commits.error) {
+  if (commitsByDate.error) {
     return (
       <CommitError
         error={{
-          httpStatus: commits.error.data?.httpStatus,
-          message: commits.error.message,
+          httpStatus: commitsByDate.error.data?.httpStatus,
+          message: commitsByDate.error.message,
         }}
       />
     );
@@ -193,8 +193,8 @@ const CommitTimeline = (props: CommitTimelineProps) => {
 
   return (
     <>
-      {commits.data &&
-        Object.entries(commits.data).map(([date, commits]) => (
+      {commitsByDate.data &&
+        Object.entries(commitsByDate.data).map(([date, commits]) => (
           <section
             className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
             key={date}

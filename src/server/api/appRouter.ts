@@ -9,7 +9,7 @@ const commitSchema = z.object({
   commit: z.object({
     author: z.object({
       name: z.string(),
-      date: z.string(),
+      date: z.string().datetime(),
     }),
     message: z.string(),
   }),
@@ -32,9 +32,12 @@ const rateLimitSchema = z.object({
   }),
 });
 
-const reposSchema = z.object({
-  total_count: z.number(),
-  incomplete_results: z.boolean(),
+const repoSchema = z.object({
+  created_at: z.string().datetime().nullable(),
+  updated_at: z.string().datetime().nullable(),
+});
+
+const repoSearchResultsSchema = z.object({
   items: z.array(
     z.object({
       id: z.number(),
@@ -67,10 +70,8 @@ export const appRouter = createTRPCRouter({
   }),
 
   getCommits: protectedProcedure
-    .input(z.object({ repo: z.string() }))
+    .input(z.object({ repoFullName: z.string() }))
     .query(async ({ input, ctx }) => {
-      const { repo } = input;
-
       // Throw if the user does not have an access token
       if (!ctx.token.accessToken) {
         throw new TRPCError({
@@ -81,7 +82,7 @@ export const appRouter = createTRPCRouter({
 
       // Fetch the user's commits
       const commitsJson = (await fetch(
-        `https://api.github.com/repos/${repo}/commits?per_page=100`,
+        `https://api.github.com/repos/${input.repoFullName}/commits?per_page=100`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,
@@ -131,11 +132,11 @@ export const appRouter = createTRPCRouter({
         });
       }
 
-      const query = encodeURIComponent(input.query);
-      const resultsPerPage = encodeURIComponent(5);
-      const pageCount = encodeURIComponent(1);
+      const encodedQuery = encodeURIComponent(input.query);
+      const resultsPerPage = 5;
+      const pageCount = 1;
       const reposJson = (await fetch(
-        `https://api.github.com/search/repositories?q=${query}&per_page=${resultsPerPage}&page=${pageCount}`,
+        `https://api.github.com/search/repositories?q=${encodedQuery}&per_page=${resultsPerPage}&page=${pageCount}`,
         {
           headers: {
             Authorization: `token ${ctx.token.accessToken}`,
@@ -157,8 +158,47 @@ export const appRouter = createTRPCRouter({
         });
       })) as unknown;
 
-      const repos = reposSchema.parse(reposJson);
+      const repos = repoSearchResultsSchema.parse(reposJson);
       return repos.items;
+    }),
+
+  getRepo: protectedProcedure
+    .input(z.object({ repoFullName: z.string() }))
+    .query(async ({ input, ctx }) => {
+
+      // Throw if the user does not have an access token
+      if (!ctx.token.accessToken) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "No access token",
+        });
+      }
+
+      const repoJson = (await fetch(
+        `https://api.github.com/repos/${input.repoFullName}`,
+        {
+          headers: {
+            Authorization: `token ${ctx.token.accessToken}`,
+          },
+        }
+      ).then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        if (res.status === 404) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Repository not found",
+          });
+        }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unknown error",
+        });
+      })) as unknown;
+
+      const repo = repoSchema.parse(repoJson);
+      return repo;
     }),
 });
 

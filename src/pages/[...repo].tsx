@@ -8,17 +8,30 @@ import { useRouter } from "next/router";
 
 const Repo = () => {
   const router = useRouter();
-  const repo = Array.isArray(router.query.repo)
+  const repoFullName = Array.isArray(router.query.repo)
     ? router.query.repo.join("/")
     : router.query.repo;
 
   const commits = api.getCommits.useQuery(
-    { repo: repo as string },
+    { repoFullName: repoFullName as string },
     {
-      enabled: !!repo,
+      enabled: !!repoFullName,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,
+    }
+  );
+
+  api.getRepo.useQuery(
+    { repoFullName: repoFullName as string },
+    {
+      enabled: !!repoFullName,
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      keepPreviousData: true,
+      onSuccess(data) {
+          console.log(data);
+      },
     }
   );
 
@@ -27,7 +40,7 @@ const Repo = () => {
   return (
     <>
       <Head>
-        <title>{repo} | vibecheck</title>
+        <title>{repoFullName} | vibecheck</title>
         <meta
           name="description"
           content="Vibecheck your codebase with sentiment analysis."
@@ -37,13 +50,13 @@ const Repo = () => {
       <header className="sticky top-0 z-10 border-b border-slate-800 bg-gray-50/80 backdrop-blur dark:bg-slate-900/80 ">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 py-3">
           <FileIcon className="h-4 w-4 text-slate-400" />
-          <h1 className="min-w-0 flex-1 truncate font-semibold">{repo}</h1>
+          <h1 className="min-w-0 flex-1 truncate font-semibold">{repoFullName}</h1>
           <CommandPalette />
         </div>
         <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
       <main className="mx-auto max-w-4xl px-4 pb-4">
-        <CommitTimeline repo={repo} />
+        <CommitTimeline repoFullName={repoFullName} />
       </main>
     </>
   );

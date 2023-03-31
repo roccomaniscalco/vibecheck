@@ -25,7 +25,7 @@ const Home: NextPage = () => {
     }),
   });
 
-  const commits = api.getCommits.useQuery({ repo: searchTerm });
+  const commits = api.getCommits.useQuery({ repoFullName: searchTerm });
 
   return (
     <>

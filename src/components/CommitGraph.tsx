@@ -8,7 +8,7 @@ type MyDatum = { date: Date; sentimentScore: number };
 const CommitGraph = ({ repo }: { repo: string }) => {
   const commits = api.getCommits.useQuery(
     {
-      repo,
+      repoFullName: repo,
     },
     {
       select: (data) => ({
