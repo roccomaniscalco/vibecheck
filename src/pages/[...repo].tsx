@@ -29,9 +29,6 @@ const Repo = () => {
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,
-      onSuccess(data) {
-          console.log(data);
-      },
     }
   );
 
@@ -47,7 +44,7 @@ const Repo = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-gray-50/80 backdrop-blur dark:bg-slate-900/80 ">
+      <header className="sticky top-0 z-10 border-b border-slate-800 bg-gray-50/80 backdrop-blur dark:bg-slate-900/80">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 py-3">
           <FileIcon className="h-4 w-4 text-slate-400" />
           <h1 className="min-w-0 flex-1 truncate font-semibold">{repoFullName}</h1>
