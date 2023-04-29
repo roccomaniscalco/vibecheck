@@ -10,7 +10,7 @@ import {
   GitHubLogoIcon,
 } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { memo, useState } from "react";
+import { memo, useDeferredValue, useState } from "react";
 
 type HighlightProps = {
   text: string;
@@ -193,6 +193,8 @@ const CommitError = (props: CommitErrorProps) => {
 
 type CommitTimelineProps = { repoFullName: string | undefined; author: string };
 const CommitTimeline = (props: CommitTimelineProps) => {
+  const deferredAuthor = useDeferredValue(props.author) 
+
   const commitsByDate = api.getCommits.useQuery(
     { repoFullName: props.repoFullName as string },
     {
@@ -201,8 +203,8 @@ const CommitTimeline = (props: CommitTimelineProps) => {
       staleTime: Infinity,
       keepPreviousData: true,
       select: (data) => {
-        const datesFilteredByUser = props.author
-          ? data.filter((commit) => commit.author.login === props.author)
+        const datesFilteredByUser = deferredAuthor
+          ? data.filter((commit) => commit.author.login === deferredAuthor)
           : data;
 
         // group commits by date

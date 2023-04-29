@@ -33,7 +33,7 @@ type AuthorComboboxProps = {
 export function AuthorCombobox({
   repoFullName,
   author,
-  setAuthor,
+  setAuthor,  
 }: AuthorComboboxProps) {
   const [open, setOpen] = useState(false);
 
@@ -41,6 +41,9 @@ export function AuthorCombobox({
     { repoFullName: repoFullName as string },
     {
       enabled: !!repoFullName,
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      keepPreviousData: true,
       select: (data) => {
         const authors = data.reduce((acc, curr) => {
           if (curr.author.login && !acc[curr.author.login]) {
