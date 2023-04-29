@@ -19,14 +19,23 @@ import {
 import { api } from "@/utils/api";
 import Image from "next/image";
 
-export function AuthorCombobox(props: { repoFullName: string | undefined }) {
+type AuthorComboboxProps = {
+  repoFullName: string | undefined;
+  author: string;
+  setAuthor: (newAuthor: string) => void;
+};
+
+export function AuthorCombobox({
+  repoFullName,
+  author,
+  setAuthor,
+}: AuthorComboboxProps) {
   const [open, setOpen] = useState(false);
-  const [author, setAuthor] = useState("");
 
   const authors = api.getCommits.useQuery(
-    { repoFullName: props.repoFullName as string },
+    { repoFullName: repoFullName as string },
     {
-      enabled: !!props.repoFullName,
+      enabled: !!repoFullName,
       select: (data) => {
         const authors = data.reduce((acc, curr) => {
           if (curr.author.login && !acc[curr.author.login]) {

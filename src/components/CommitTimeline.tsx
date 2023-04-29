@@ -191,7 +191,7 @@ const CommitError = (props: CommitErrorProps) => {
   );
 };
 
-type CommitTimelineProps = { repoFullName: string | undefined };
+type CommitTimelineProps = { repoFullName: string | undefined; author: string };
 const CommitTimeline = (props: CommitTimelineProps) => {
   const commitsByDate = api.getCommits.useQuery(
     { repoFullName: props.repoFullName as string },
@@ -201,9 +201,9 @@ const CommitTimeline = (props: CommitTimelineProps) => {
       staleTime: Infinity,
       keepPreviousData: true,
       select: (data) => {
-        const datesFilteredByUser = data.filter(
-          (commit) => commit.author.login
-        );
+        const datesFilteredByUser = props.author
+          ? data.filter((commit) => commit.author.login === props.author)
+          : data;
 
         // group commits by date
         const commitsByDate = datesFilteredByUser.reduce((result, commit) => {
@@ -245,7 +245,7 @@ const CommitTimeline = (props: CommitTimelineProps) => {
           key={date}
         >
           <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
-            <CommitIcon />
+            <CommitIcon className="bg-slate-900" />
             <span>Commits on {date}</span>
           </div>
           <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">

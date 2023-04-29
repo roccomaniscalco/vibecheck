@@ -6,6 +6,7 @@ import { api } from "@/utils/api";
 import { FileIcon } from "@radix-ui/react-icons";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Repo = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const Repo = () => {
       keepPreviousData: true,
     }
   );
+  const showLoadingBar = commits.isFetching || commits.isLoading;
 
   api.getRepo.useQuery(
     { repoFullName: repoFullName as string },
@@ -33,7 +35,10 @@ const Repo = () => {
     }
   );
 
-  const showLoadingBar = commits.isFetching || commits.isLoading;
+  const [author, setAuthor] = useState("");
+  useEffect(() => {
+    setAuthor("");
+  }, [repoFullName]);
 
   return (
     <>
@@ -51,13 +56,17 @@ const Repo = () => {
           <h1 className="min-w-0 flex-1 truncate font-semibold">
             {repoFullName}
           </h1>
-          <AuthorCombobox repoFullName={repoFullName}/>
+          <AuthorCombobox
+            author={author}
+            repoFullName={repoFullName}
+            setAuthor={setAuthor}
+          />
           <CommandPalette />
         </div>
         <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
       <main className="mx-auto max-w-4xl px-4 pb-4">
-        <CommitTimeline repoFullName={repoFullName} />
+        <CommitTimeline repoFullName={repoFullName} author={author} />
       </main>
     </>
   );
