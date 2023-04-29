@@ -43,7 +43,9 @@ const Repo = () => {
   return (
     <>
       <Head>
-        <title>{repoFullName} | vibecheck</title>
+        <title>
+          {repoFullName ? `${repoFullName} | vibecheck` : "vibecheck"}
+        </title>
         <meta
           name="description"
           content="Vibecheck your codebase with sentiment analysis."
