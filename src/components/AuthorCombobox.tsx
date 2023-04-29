@@ -73,7 +73,7 @@ export function AuthorCombobox(props: { repoFullName: string | undefined }) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-0" align="end">
-        <Command className="max-h-80">
+        <Command>
           <CommandInput placeholder="Search author..." />
           <CommandEmpty>No author found.</CommandEmpty>
           <CommandGroup>
