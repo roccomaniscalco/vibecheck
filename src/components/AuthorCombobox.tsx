@@ -1,7 +1,12 @@
 "use client";
 
-import { CheckIcon, ChevronDownIcon, PersonIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import {
+  CheckIcon,
+  CaretSortIcon,
+  Cross1Icon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
+import { type MouseEvent, useState } from "react";
 
 import { Button } from "@/components/ui/clickable";
 import {
@@ -51,36 +56,53 @@ export function AuthorCombobox({
     }
   );
 
+  const handleClearAuthor = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setAuthor("");
+  };
+
   const authorAvatarUrl = authors.data?.[author]?.avatar_url;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          role="combobox"
-          aria-expanded={open}
-          className="flex w-56 items-center gap-2 px-3 py-2"
-        >
-          {author && authorAvatarUrl ? (
-            <>
-              <Image
-                className=" block rounded-full"
-                width={20}
-                height={20}
-                src={`${authorAvatarUrl}?size=20`}
-                alt={`${author} avatar`}
-              />
-              {author}
-            </>
-          ) : (
-            <>
-              <PersonIcon className="h-4 w-4 opacity-50" />{" "}
-              {"Filter by author..."}
-            </>
-          )}
-          <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50" />
-        </Button>
-      </PopoverTrigger>
+      <div className="relative">
+        <PopoverTrigger asChild>
+          <Button
+            role="combobox"
+            aria-expanded={open}
+            className="flex w-56 items-center gap-2 px-3 py-2"
+          >
+            {author && authorAvatarUrl ? (
+              <>
+                <Image
+                  className=" block rounded-full"
+                  width={20}
+                  height={20}
+                  src={`${authorAvatarUrl}?size=20`}
+                  alt={`${author} avatar`}
+                />
+                {author}
+              </>
+            ) : (
+              <>
+                <PersonIcon className="h-4 w-4 opacity-50" />{" "}
+                {"Filter by author..."}
+              </>
+            )}
+            {!author && (
+              <CaretSortIcon className="ml-auto h-4 w-4 opacity-50" />
+            )}
+          </Button>
+        </PopoverTrigger>
+        {author && (
+          <Button
+            className="absolute top-0 right-0 flex h-9 w-9 items-center justify-center"
+            onClick={handleClearAuthor}
+          >
+            <Cross1Icon className="h-4 w-4 opacity-50" />
+          </Button>
+        )}
+      </div>
       <PopoverContent className="w-56 p-0" align="end">
         <Command>
           <CommandInput placeholder="Search author..." />
