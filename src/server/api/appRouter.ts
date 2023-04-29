@@ -15,8 +15,8 @@ const commitSchema = z.object({
   }),
   author: z
     .object({
-      login: z.string(),
-      avatar_url: z.string(),
+      login: z.string().optional(),
+      avatar_url: z.string().optional(),
     })
     .nullable(),
 });

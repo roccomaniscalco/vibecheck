@@ -1,13 +1,5 @@
 "use client";
 
-import {
-  CheckIcon,
-  CaretSortIcon,
-  Cross1Icon,
-  PersonIcon,
-} from "@radix-ui/react-icons";
-import { type MouseEvent, useState, useRef } from "react";
-
 import { Button } from "@/components/ui/clickable";
 import {
   Command,
@@ -22,7 +14,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { api } from "@/utils/api";
+import {
+  CaretSortIcon,
+  CheckIcon,
+  Cross1Icon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
 import Image from "next/image";
+import { useRef, useState, type MouseEvent } from "react";
 
 type AuthorComboboxProps = {
   repoFullName: string | undefined;
