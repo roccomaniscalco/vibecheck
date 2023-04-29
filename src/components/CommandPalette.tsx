@@ -77,14 +77,15 @@ export function CommandPalette() {
 
   return (
     <>
-      <Button onClick={handleOpenButtonClick}>
-        <div className="flex items-center gap-2 px-3 py-2">
-          <MagnifyingGlassIcon className="h-4 w-4 opacity-50" />
-          <p className="flex-1 text-left text-sm text-slate-400">Search...</p>
-          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-slate-100 bg-slate-100 px-1.5 font-mono text-[10px] font-medium text-slate-400 opacity-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-            <span className="text-xs">⌘</span>K
-          </kbd>
-        </div>
+      <Button
+        onClick={handleOpenButtonClick}
+        className="flex items-center gap-2 px-3 py-2"
+      >
+        <MagnifyingGlassIcon className="h-4 w-4 opacity-50" />
+        Search...
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-slate-100 bg-slate-100 px-1.5 font-mono text-[10px] font-medium text-slate-400 opacity-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+          <span className="text-xs">⌘</span>K
+        </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
         <CommandInput
@@ -104,22 +105,19 @@ export function CommandPalette() {
                   key={repo.id}
                   value={repo.full_name}
                   onSelect={handleSearchResultSelect}
+                  className="flex gap-2 overflow-hidden"
                 >
-                  <div className="flex gap-2 overflow-hidden">
-                    <FileIcon className="h-5 w-5 text-slate-400" />
-                    <p className="flex-1 truncate">{repo.full_name}</p>
-                  </div>
+                  <FileIcon className="h-5 w-5 text-slate-400" />
+                  <p className="flex-1 truncate">{repo.full_name}</p>
                 </CommandItem>
               ))}
             </CommandGroup>
           )}
           {repoSearchResults.isError && (
             <CommandEmpty>
-              <p className="mx-auto w-max rounded-md bg-red-500 py-1 px-2 font-semibold">
-                {repoSearchResults.error.data?.httpStatus &&
-                  `${repoSearchResults.error.data.httpStatus}: `}
-                {repoSearchResults.error.message}
-              </p>
+              {repoSearchResults.error.data?.httpStatus &&
+                `${repoSearchResults.error.data.httpStatus}: `}
+              {repoSearchResults.error.message}
             </CommandEmpty>
           )}
         </CommandList>

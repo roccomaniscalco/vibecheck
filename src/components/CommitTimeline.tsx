@@ -44,9 +44,9 @@ const Highlight = (props: HighlightProps) => {
   return (
     <>
       {chunks.map(({ text, isDistinct, id, score }) => (
-        <>
+        <span key={id}>
           {score && isDistinct ? (
-            <HoverCard.Root key={id}>
+            <HoverCard.Root>
               <HoverCard.Trigger asChild>
                 <span
                   className={
@@ -61,7 +61,7 @@ const Highlight = (props: HighlightProps) => {
               <HoverCard.Portal>
                 <HoverCard.Content side="top" sideOffset={4}>
                   <div
-                    className={`rounded-md px-2 py-1 font-mono font-slate-200 text-sm ${
+                    className={`font-slate-200 rounded-md px-2 py-1 font-mono text-sm ${
                       score < 0 ? "bg-red-900" : "bg-green-900"
                     }`}
                   >
@@ -75,9 +75,9 @@ const Highlight = (props: HighlightProps) => {
               </HoverCard.Portal>
             </HoverCard.Root>
           ) : (
-            <span key={id}>{text}</span>
+            text
           )}
-        </>
+        </span>
       ))}
     </>
   );
@@ -201,8 +201,12 @@ const CommitTimeline = (props: CommitTimelineProps) => {
       staleTime: Infinity,
       keepPreviousData: true,
       select: (data) => {
+        const datesFilteredByUser = data.filter(
+          (commit) => commit.author.login
+        );
+
         // group commits by date
-        return data.reduce((result, commit) => {
+        const commitsByDate = datesFilteredByUser.reduce((result, commit) => {
           const date = new Date(commit.date).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -212,6 +216,8 @@ const CommitTimeline = (props: CommitTimelineProps) => {
           result[date]?.push(commit);
           return result;
         }, {} as Record<string, CommitProps[]>);
+
+        return commitsByDate;
       },
     }
   );
@@ -227,25 +233,28 @@ const CommitTimeline = (props: CommitTimelineProps) => {
     );
   }
 
+  if (commitsByDate.isLoading) {
+    return null;
+  }
+
   return (
     <>
-      {commitsByDate.data &&
-        Object.entries(commitsByDate.data).map(([date, commits]) => (
-          <section
-            className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
-            key={date}
-          >
-            <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
-              <CommitIcon />
-              <span>Commits on {date}</span>
-            </div>
-            <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">
-              {commits.map((commit) => (
-                <Commit {...commit} key={commit.sha} />
-              ))}
-            </div>
-          </section>
-        ))}
+      {Object.entries(commitsByDate.data).map(([date, commits]) => (
+        <section
+          className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
+          key={date}
+        >
+          <div className="-ml-6 mt-4 flex items-center gap-4 text-slate-400">
+            <CommitIcon />
+            <span>Commits on {date}</span>
+          </div>
+          <div className="-ml-8 rounded-md border border-slate-200 bg-slate-900 dark:border-slate-800 sm:ml-2">
+            {commits.map((commit) => (
+              <Commit {...commit} key={commit.sha} />
+            ))}
+          </div>
+        </section>
+      ))}
     </>
   );
 };
