@@ -7,6 +7,11 @@ import { FileIcon } from "@radix-ui/react-icons";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+const CommitGraph = dynamic(() => import("@/components/CommitGraph"), {
+  ssr: false,
+});
 
 const Repo = () => {
   const router = useRouter();
@@ -68,6 +73,11 @@ const Repo = () => {
         <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
       <main className="mx-auto max-w-4xl px-4 pb-4">
+        {repoFullName && (
+          <div className="my-8">
+            <CommitGraph repoFullName={repoFullName} author={author} />
+          </div>
+        )}
         <CommitTimeline repoFullName={repoFullName} author={author} />
       </main>
     </>

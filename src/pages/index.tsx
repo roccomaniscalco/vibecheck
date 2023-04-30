@@ -1,13 +1,8 @@
 import { api } from "@/utils/api";
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useState } from "react";
-
-const CommitGraph = dynamic(() => import("@/components/CommitGraph"), {
-  ssr: false,
-});
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -58,8 +53,6 @@ const Home: NextPage = () => {
           </meter>
         </div>
       )}
-
-      <CommitGraph repo={searchTerm} />
 
       {commits && <div className="text-red-500">{commits.error?.message}</div>}
     </>

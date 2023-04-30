@@ -5,18 +5,30 @@ import { Chart } from "react-charts";
 
 type MyDatum = { date: Date; sentimentScore: number };
 
-const CommitGraph = ({ repo }: { repo: string }) => {
+const CommitGraph = ({
+  repoFullName,
+  author,
+}: {
+  repoFullName: string;
+  author: string;
+}) => {
   const commits = api.getCommits.useQuery(
+    { repoFullName },
     {
-      repoFullName: repo,
-    },
-    {
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      keepPreviousData: true,
       select: (data) => ({
         label: "Score",
-        data: data.map((commit) => ({
-          date: new Date(commit.date),
-          sentimentScore: Number(commit.sentiment.score),
-        })),
+        data: data.reduce((acc, curr) => {
+          if (!author || curr.author.login === author) {
+            acc.push({
+              date: new Date(curr.date),
+              sentimentScore: Number(curr.sentiment.score),
+            });
+          }
+          return acc;
+        }, [] as { date: Date; sentimentScore: number }[]),
       }),
     }
   );
@@ -55,8 +67,7 @@ const CommitGraph = ({ repo }: { repo: string }) => {
             initialHeight: 400,
             getDatumStyle: (datum) => ({
               circle: {
-                r: Math.log(Math.abs(datum.originalDatum.sentimentScore)) * 4,
-                opacity: 0.5,
+                opacity: 0.8,
               },
               color:
                 datum.originalDatum.sentimentScore > 0 ? "#4ade80" : "#f87171",
