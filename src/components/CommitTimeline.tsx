@@ -193,7 +193,7 @@ const CommitError = (props: CommitErrorProps) => {
 
 type CommitTimelineProps = { repoFullName: string | undefined; author: string };
 const CommitTimeline = (props: CommitTimelineProps) => {
-  const deferredAuthor = useDeferredValue(props.author) 
+  const deferredAuthor = useDeferredValue(props.author);
 
   const commitsByDate = api.getCommits.useQuery(
     { repoFullName: props.repoFullName as string },
@@ -208,7 +208,9 @@ const CommitTimeline = (props: CommitTimelineProps) => {
           : data;
 
         // group commits by date
-        const commitsByDate = datesFilteredByUser.reduce((result, commit) => {
+        const commitsByDate = datesFilteredByUser.reduce<
+          Record<string, CommitProps[]>
+        >((result, commit) => {
           const date = new Date(commit.date).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -217,7 +219,7 @@ const CommitTimeline = (props: CommitTimelineProps) => {
           if (!result[date]) result[date] = [];
           result[date]?.push(commit);
           return result;
-        }, {} as Record<string, CommitProps[]>);
+        }, {});
 
         return commitsByDate;
       },

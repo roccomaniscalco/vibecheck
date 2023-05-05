@@ -20,15 +20,18 @@ const CommitGraph = ({
       keepPreviousData: true,
       select: (data) => ({
         label: "Score",
-        data: data.reduce((acc, curr) => {
-          if (!author || curr.author.login === author) {
-            acc.push({
-              date: new Date(curr.date),
-              sentimentScore: Number(curr.sentiment.score),
-            });
-          }
-          return acc;
-        }, [] as { date: Date; sentimentScore: number }[]),
+        data: data.reduce<{ date: Date; sentimentScore: number }[]>(
+          (acc, curr) => {
+            if (!author || curr.author.login === author) {
+              acc.push({
+                date: new Date(curr.date),
+                sentimentScore: Number(curr.sentiment.score),
+              });
+            }
+            return acc;
+          },
+          []
+        ),
       }),
     }
   );

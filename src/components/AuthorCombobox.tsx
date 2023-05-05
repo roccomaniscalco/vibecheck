@@ -45,7 +45,9 @@ export function AuthorCombobox({
       staleTime: Infinity,
       keepPreviousData: true,
       select: (data) => {
-        const authors = data.reduce((acc, curr) => {
+        const authors = data.reduce<
+          Record<string, { name: string; avatar_url: string | undefined }>
+        >((acc, curr) => {
           if (curr.author.login && !acc[curr.author.login]) {
             acc[curr.author.login] = {
               name: curr.author.name,
@@ -53,7 +55,7 @@ export function AuthorCombobox({
             };
           }
           return acc;
-        }, {} as Record<string, { name: string; avatar_url: string | undefined }>);
+        }, {});
         return authors;
       },
     }
