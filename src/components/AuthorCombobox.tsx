@@ -90,7 +90,7 @@ export function AuthorCombobox({
               <>
                 {authorAvatarUrl && (
                   <Image
-                    className=" block rounded-full"
+                    className="rounded-full"
                     width={20}
                     height={20}
                     src={`${authorAvatarUrl}?size=20`}
@@ -116,7 +116,7 @@ export function AuthorCombobox({
           </Button>
         )}
       </div>
-      <PopoverContent className="w-56 p-0" align="end">
+      <PopoverContent className="w-56 p-0">
         <Command>
           <CommandInput placeholder="Search author..." />
           <CommandEmpty>No author found.</CommandEmpty>
@@ -134,7 +134,7 @@ export function AuthorCombobox({
                       <CheckIcon className="mr-2 h-4 w-4" />
                     ) : avatar_url ? (
                       <Image
-                        className="mr-2 block rounded-full"
+                        className="mr-2 rounded-full"
                         width={16}
                         height={16}
                         src={`${avatar_url}?size=20`}

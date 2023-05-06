@@ -237,7 +237,7 @@ const CommitTimeline = (props: CommitTimelineProps) => {
   }
 
   return (
-    <>
+    <div>
       {Object.entries(commitsByDate.data).map(([date, commits]) => (
         <section
           className="ml-4 mb-[2px] flex flex-col gap-4 border-l-2 border-dotted border-slate-800 pl-4"
@@ -254,7 +254,7 @@ const CommitTimeline = (props: CommitTimelineProps) => {
           </div>
         </section>
       ))}
-    </>
+    </div>
   );
 };
 

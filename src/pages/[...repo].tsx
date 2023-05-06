@@ -72,11 +72,9 @@ const Repo = () => {
         </div>
         <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
-      <main className="mx-auto max-w-4xl px-4 pb-4">
+      <main className="mx-auto max-w-4xl px-4 pb-4 flex flex-col gap-8 py-8">
         {repoFullName && (
-          <div className="my-8">
-            <CommitGraph repoFullName={repoFullName} author={author} />
-          </div>
+          <CommitGraph repoFullName={repoFullName} author={author} />
         )}
         <CommitTimeline repoFullName={repoFullName} author={author} />
       </main>
