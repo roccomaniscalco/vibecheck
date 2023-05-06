@@ -111,12 +111,13 @@ export function AuthorCombobox({
         <Command>
           <CommandInput placeholder="Search author..." />
           <CommandEmpty>No author found.</CommandEmpty>
-          <CommandGroup>
+          <CommandGroup className="max-h-80 overflow-auto">
             {authors.data &&
               Object.entries(authors.data).map(([login, { avatar_url }]) => (
                 <CommandItem
                   className="truncate"
                   key={login}
+                  value={login}
                   onSelect={() => {
                     setAuthor(login === author ? "" : login);
                     setOpen(false);
