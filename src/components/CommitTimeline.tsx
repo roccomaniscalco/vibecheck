@@ -98,9 +98,6 @@ const Commit = (props: CommitProps) => {
   ];
   const description = restMessage.join("\n");
 
-  if (summary === "Provide icon to edge devtools. (#26543)")
-    console.log(props.sentiment.calculation);
-
   return (
     <article className="border-b border-slate-800 py-3 px-4 last:border-b-0">
       <Collapsible.Root
@@ -149,23 +146,21 @@ const Commit = (props: CommitProps) => {
         )}
       </Collapsible.Root>
       <div className="mt-2 flex items-center gap-2">
-        {props.author.avatar_url && props.author.login && (
-          <>
-            <Image
-              className="block rounded-full"
-              width={20}
-              height={20}
-              src={`${props.author.avatar_url}?size=20`}
-              alt={`${props.author.name} avatar`}
-            />
-            <span>
-              <span className="font-semibold">{props.author.login}</span>{" "}
-              <span className="text-slate-400">
-                committed {dateDiff(new Date(props.date), new Date())}
-              </span>
-            </span>
-          </>
+        {props.author.avatar_url && (
+          <Image
+            className="block rounded-full"
+            width={20}
+            height={20}
+            src={`${props.author.avatar_url}?size=20`}
+            alt={`${props.author.username} avatar`}
+          />
         )}
+        <span>
+          <span className="font-semibold">{props.author.username}</span>{" "}
+          <span className="text-slate-400">
+            committed {dateDiff(new Date(props.date), new Date())}
+          </span>
+        </span>
       </div>
     </article>
   );
@@ -204,7 +199,7 @@ const CommitTimeline = (props: CommitTimelineProps) => {
       keepPreviousData: true,
       select: (data) => {
         const datesFilteredByUser = deferredAuthor
-          ? data.filter((commit) => commit.author.login === deferredAuthor)
+          ? data.filter((commit) => commit.author.username.toLowerCase() === deferredAuthor)
           : data;
 
         // group commits by date

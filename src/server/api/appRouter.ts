@@ -111,8 +111,7 @@ export const appRouter = createTRPCRouter({
         message: commit.commit.message,
         date: commit.commit.author.date,
         author: {
-          login: commit.author?.login,
-          name: commit.commit.author.name,
+          username: commit.author?.login ? commit.author.login : commit.commit.author.name,
           avatar_url: commit.author?.avatar_url,
         },
         sentiment: sentiment.analyze(commit.commit.message),

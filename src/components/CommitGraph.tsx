@@ -22,7 +22,7 @@ const CommitGraph = ({
         label: "Score",
         data: data.reduce<{ date: Date; sentimentScore: number }[]>(
           (acc, curr) => {
-            if (!author || curr.author.login === author) {
+            if (!author || curr.author.username.toLowerCase() === author) {
               acc.push({
                 date: new Date(curr.date),
                 sentimentScore: Number(curr.sentiment.score),
