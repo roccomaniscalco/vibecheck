@@ -9,12 +9,13 @@ const CommitGraph = ({
   repoFullName,
   author,
 }: {
-  repoFullName: string;
+  repoFullName: string | undefined;
   author: string;
 }) => {
   const commits = api.getCommits.useQuery(
-    { repoFullName },
+    { repoFullName: repoFullName as string },
     {
+      enabled: !!repoFullName,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       keepPreviousData: true,

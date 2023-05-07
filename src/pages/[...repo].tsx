@@ -6,7 +6,7 @@ import { api } from "@/utils/api";
 import { FileIcon } from "@radix-ui/react-icons";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 const CommitGraph = dynamic(() => import("@/components/CommitGraph"), {
@@ -41,6 +41,7 @@ const Repo = () => {
   );
 
   const [author, setAuthor] = useState("");
+  const deferredAuthor = useDeferredValue(author)
   useEffect(() => {
     setAuthor("");
   }, [repoFullName]);
@@ -72,11 +73,9 @@ const Repo = () => {
         </div>
         <div className="h-0">{showLoadingBar && <LoadingGradient />}</div>
       </header>
-      <main className="mx-auto max-w-4xl px-4 pb-4 flex flex-col gap-8 py-8">
-        {repoFullName && (
-          <CommitGraph repoFullName={repoFullName} author={author} />
-        )}
-        <CommitTimeline repoFullName={repoFullName} author={author} />
+      <main className="mx-auto flex max-w-4xl flex-col gap-8 px-4 py-8 pb-4">
+        <CommitGraph repoFullName={repoFullName} author={deferredAuthor} />
+        <CommitTimeline repoFullName={repoFullName} author={deferredAuthor} />
       </main>
     </>
   );
