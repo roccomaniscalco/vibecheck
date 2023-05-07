@@ -120,7 +120,7 @@ export function AuthorCombobox({
         <Command>
           <CommandInput placeholder="Search author..." />
           <CommandEmpty>No author found.</CommandEmpty>
-          <CommandGroup className="max-h-80 overflow-auto">
+          <CommandGroup className="max-h-80 overflow-auto scroll-p-3">
             {authors.data &&
               Object.entries(authors.data).map(
                 ([authorKey, { username, avatar_url }]) => (
